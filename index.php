@@ -9,11 +9,6 @@
     <!-- Tailwind Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        html,
-        body {
-            height: 100%
-        }
-
         body {
             transition: background-image .35s ease, background-color .35s ease, color .2s ease;
             background-size: cover;
@@ -62,23 +57,6 @@
             box-shadow: inset 0 0 0 rgba(0, 0, 0, 0);
         }
 
-        /* style the small select (engine icon) to avoid white default backgrounds */
-        select.glass {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            background-color: transparent;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.6rem;
-        }
-
-        /* hide IE/Edge expand arrow */
-        select.glass::-ms-expand {
-            display: none;
-        }
-
         /* file input: hide native control and use themed label */
         input[type="file"] {
             display: none;
@@ -92,13 +70,17 @@
             cursor: pointer;
         }
 
-        /* responsive: hide engine select and custom input on mobile */
+        /* responsive: hide custom input on mobile */
         @media (max-width: 640px) {
-            .engine-select, #customEngineInput { display: none !important; }
+            #customEngineInput {
+                display: none !important;
+            }
         }
 
         /* hide theme toggle (disable switching to light) */
-        #toggleTheme { display: none !important; }
+        #toggleTheme {
+            display: none !important;
+        }
 
         /* subtle preset button hover */
         .presetBtn {
@@ -171,23 +153,60 @@
             height: 20px;
         }
 
-        /* dropdown engine select styling */
-        .engine-select {
+        /* custom dropdown styling */
+        .custom-dropdown-container {
+            position: relative;
+        }
+
+        .custom-dropdown-trigger {
             width: 68px;
             height: 54px;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
             padding: .5rem;
             border-radius: 9999px;
-            text-indent: -9999px;
-            /* hide text visually so we can show icon */
-            overflow: hidden;
-            position: relative;
+            background-color: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
         }
 
-        .engine-select option {
-            text-indent: 0;
+        .custom-dropdown-trigger:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .custom-dropdown-trigger img {
+            width: 25px;
+            height: 25px;
+        }
+
+        .custom-dropdown-menu {
+            position: absolute;
+            text-align: left;
+            left: 0;
+            top: 100%;
+            margin-top: 8px;
+            width: 12rem;
+            padding: 8px;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+            z-index: 50;
+        }
+
+        .custom-dropdown-menu li {
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .custom-dropdown-menu li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         /* input group: clear + search inside the right side */
@@ -225,7 +244,7 @@
 
         /* make primary fields and controls pill-shaped */
         input.p-3,
-        .engine-select,
+        .custom-dropdown-trigger,
         .btn-search,
         .file-label,
         .presetBtn,
@@ -289,8 +308,29 @@
         </div>
 
         <form id="searchForm" class="flex gap-3 items-center justify-center mb-6">
-            <!-- engine picker as dropdown with icon background set by JS -->
-            <select id="engineSelect" class="glass engine-select p-3 rounded-full" title="Pilih mesin pencari">
+            <!-- Container untuk dropdown kustom -->
+            <div class="custom-dropdown-container relative">
+                <div id="engineDropdownTrigger" class="custom-dropdown-trigger" title="Pilih mesin pencari">
+                    <img id="selectedEngineIcon" src="./icon/google.svg" alt="Google">
+                </div>
+                <ul id="engineDropdownMenu" class="custom-dropdown-menu hidden">
+                    <li data-value="https://www.google.com/search?q=" data-icon="./icon/google.svg">
+                        <img src="./icon/google.svg" alt="Google" class="inline-block w-6 h-6 mr-2" /> Google
+                    </li>
+                    <li data-value="https://duckduckgo.com/?q=" data-icon="./icon/duckduckgo.svg">
+                        <img src="./icon/duckduckgo.svg" alt="DuckDuckGo" class="inline-block w-6 h-6 mr-2" /> DuckDuckGo
+                    </li>
+                    <li data-value="https://www.bing.com/search?q=" data-icon="./icon/bing.svg">
+                        <img src="./icon/bing.svg" alt="Bing" class="inline-block w-6 h-6 mr-2" /> Bing
+                    </li>
+                    <li data-value="https://search.brave.com/search?q=" data-icon="./icon/brave.svg">
+                        <img src="./icon/brave.svg" alt="Brave" class="inline-block w-6 h-6 mr-2" /> Brave
+                    </li>
+                </ul>
+            </div>
+
+            <!-- <select> asli disembunyikan untuk fungsionalitas formulir -->
+            <select id="engineSelect" style="display:none;">
                 <option value="https://www.google.com/search?q=">Google</option>
                 <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
                 <option value="https://www.bing.com/search?q=">Bing</option>
@@ -300,7 +340,7 @@
             <input id="customEngineInput" class="p-3 flex-1 glass text-sm" placeholder="Custom engine base URL" style="display:none;" />
 
             <div class="input-group relative flex-1">
-                <input id="queryInput" type="search" name="q" autocomplete="off" class="p-3 w-full text-lg font-medium glass placeholder:text-white/50" placeholder="Cari sesuatu..." />
+                <input id="queryInput" type="search" name="q" autocomplete="off" class="p-3 w-full text-lg font-medium glass placeholder:text-white/50 overflow-hidden text-ellipsis" placeholder="Cari sesuatu..." />
                 <div id="suggestions" class="suggestions" style="display:none;"></div>
                 <button type="button" id="clearInput" aria-label="Clear" class="btn-clear" title="Clear" style="display:none;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
@@ -345,13 +385,28 @@
 
             <div class="mb-3">
                 <label class="text-sm">Default Search Engine</label>
-                <div class="mt-2 text-sm">
-                    <select id="defaultEngine" class="p-2 rounded-full glass w-full">
+                <div class="mt-2 text-sm custom-dropdown-container">
+                    <!-- Dropdown kustom baru untuk pengaturan -->
+                    <div id="defaultEngineTrigger" class="custom-dropdown-trigger p-2 w-full flex items-center justify-between text-base" style="width: 100%; height: auto; border-radius: 9999px;">
+                        <span id="defaultEngineText">Google</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 opacity-70">
+                            <path d="M6 9l6 6 6-6" />
+                        </svg>
+                    </div>
+                    <ul id="defaultEngineMenu" class="custom-dropdown-menu hidden" style="width: 100%;">
+                        <li data-value="https://www.google.com/search?q=">Google</li>
+                        <li data-value="https://duckduckgo.com/?q=">DuckDuckGo</li>
+                        <li data-value="https://www.bing.com/search?q=">Bing</li>
+                        <li data-value="custom">Custom...</li>
+                    </ul>
+                    <!-- <select> asli disembunyikan untuk fungsionalitas -->
+                    <select id="defaultEngine" class="hidden">
                         <option value="https://www.google.com/search?q=">Google</option>
                         <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
                         <option value="https://www.bing.com/search?q=">Bing</option>
                         <option value="custom">Custom...</option>
                     </select>
+
                     <input id="defaultEngineCustom" placeholder="Custom engine base URL" class="mt-2 p-2 rounded-full glass w-full" style="display:none;" />
                 </div>
             </div>
@@ -363,7 +418,7 @@
             </div>
         </aside>
 
-    <footer class="mt-8 text-xs opacity-70">JKP • <span id="year"></span> • local settings</footer>
+        <footer class="mt-8 text-xs ">JKP • <span id="year"></span> • local settings</footer>
     </main>
 
     <!-- Floating settings button -->
@@ -428,8 +483,18 @@
         const removeBg = document.getElementById('removeBg');
         const queryInput = document.getElementById('queryInput');
         const searchForm = document.getElementById('searchForm');
-        const engineButtons = document.querySelectorAll('.engineBtn');
         const clearBtn = document.getElementById('clearInput');
+
+        const engineDropdownTrigger = document.getElementById('engineDropdownTrigger');
+        const engineDropdownMenu = document.getElementById('engineDropdownMenu');
+        const selectedEngineIcon = document.getElementById('selectedEngineIcon');
+        const engineMenuItems = engineDropdownMenu.querySelectorAll('li');
+
+        // New elements for the settings dropdown
+        const defaultEngineTrigger = document.getElementById('defaultEngineTrigger');
+        const defaultEngineMenu = document.getElementById('defaultEngineMenu');
+        const defaultEngineText = document.getElementById('defaultEngineText');
+        const defaultEngineMenuItems = defaultEngineMenu.querySelectorAll('li');
 
         let settings = loadSettings();
 
@@ -459,12 +524,27 @@
                 customEngineInput.style.display = 'block';
                 customEngineInput.value = s.engine
             } else customEngineInput.style.display = 'none';
-            defaultEngineSelect.value = ['https://www.google.com/search?q=', 'https://duckduckgo.com/?q=', 'https://www.bing.com/search?q='].includes(s.engine) ? s.engine : 'custom';
-            if (defaultEngineSelect.value === 'custom') {
+
+            // Update settings dropdown based on saved engine
+            const defaultMatched = ['https://www.google.com/search?q=', 'https://duckduckgo.com/?q=', 'https://www.bing.com/search?q='].includes(s.engine) ? s.engine : 'custom';
+            defaultEngineSelect.value = defaultMatched;
+            const selectedText = defaultEngineMenu.querySelector(`[data-value="${defaultMatched}"]`)?.textContent.trim() || "Custom...";
+            defaultEngineText.textContent = selectedText;
+            if (defaultMatched === 'custom') {
                 defaultEngineCustom.style.display = 'block';
                 defaultEngineCustom.value = s.engine
             } else defaultEngineCustom.style.display = 'none';
+
+            // Also update the main dropdown's icon
+            const mainEngineItem = engineDropdownMenu.querySelector(`[data-value="${s.engine}"]`);
+            if (mainEngineItem) {
+                selectedEngineIcon.src = mainEngineItem.getAttribute('data-icon');
+            } else {
+                // If it's a custom URL, default to Google icon
+                selectedEngineIcon.src = "./icon/google.svg";
+            }
         }
+
         applySettings(settings);
 
         settingsBtn.addEventListener('click', () => {
@@ -474,13 +554,15 @@
             settingsPanel.style.display = 'none'
         });
         resetBtn.addEventListener('click', () => {
-            if (confirm('Reset semua pengaturan ke default?')) {
+            // Use a custom modal instead of alert/confirm
+            const result = confirm('Reset semua pengaturan ke default?');
+            if (result) {
                 settings = {
                     ...defaultSettings
                 };
                 saveSettings(settings);
                 applySettings(settings);
-                alert('Reset selesai');
+                alert('Reset selesai.');
             }
         });
         toggleThemeBtn.addEventListener('click', () => {
@@ -489,22 +571,59 @@
             // persist theme change immediately
             saveSettings(settings);
         });
-        engineSelect.addEventListener('change', e => {
-            const v = e.target.value;
-            customEngineInput.style.display = v === 'custom' ? 'block' : 'none';
-            // update visual icon background
-            fixSelectTheme();
+
+        // Event listener untuk dropdown kustom utama
+        engineDropdownTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            engineDropdownMenu.classList.toggle('hidden');
+            defaultEngineMenu.classList.add('hidden'); // Close other dropdown
         });
-        // remove old engine button handlers (not used when dropdown present)
-        defaultEngineSelect.addEventListener('change', e => {
-            defaultEngineCustom.style.display = e.target.value === 'custom' ? 'block' : 'none'
+
+        // Event listener untuk item di dropdown kustom utama
+        engineMenuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const value = item.getAttribute('data-value');
+                const icon = item.getAttribute('data-icon');
+                selectedEngineIcon.src = icon;
+                engineDropdownMenu.classList.add('hidden');
+                engineSelect.value = value;
+            });
         });
+
+        // Event listener untuk dropdown kustom pengaturan
+        defaultEngineTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            defaultEngineMenu.classList.toggle('hidden');
+            engineDropdownMenu.classList.add('hidden'); // Close other dropdown
+        });
+
+        // Event listener untuk item di dropdown pengaturan
+        defaultEngineMenuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const value = item.getAttribute('data-value');
+                const text = item.textContent.trim();
+                defaultEngineText.textContent = text;
+                defaultEngineSelect.value = value;
+                defaultEngineMenu.classList.add('hidden');
+                defaultEngineCustom.style.display = value === 'custom' ? 'block' : 'none';
+            });
+        });
+
+        // Close all dropdowns when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!engineDropdownTrigger.contains(event.target) && !engineDropdownMenu.contains(event.target)) {
+                engineDropdownMenu.classList.add('hidden');
+            }
+            if (!defaultEngineTrigger.contains(event.target) && !defaultEngineMenu.contains(event.target)) {
+                defaultEngineMenu.classList.add('hidden');
+            }
+        });
+
         presetBtns.forEach(b => {
             b.addEventListener('click', () => {
                 const url = b.getAttribute('data-preset');
                 settings.wallpaper = url === 'none' ? null : url;
                 applyWallpaper(settings.wallpaper)
-                // persist wallpaper choice immediately (user expects preview -> saved)
                 saveSettings(settings);
             })
         });
@@ -518,7 +637,6 @@
             reader.onload = () => {
                 settings.wallpaper = reader.result;
                 applyWallpaper(settings.wallpaper)
-                // save uploaded wallpaper
                 saveSettings(settings);
             };
             reader.readAsDataURL(f)
@@ -529,10 +647,9 @@
             saveSettings(settings);
         });
         saveSettingsBtn.addEventListener('click', () => {
-            let chosen = engineSelect.value === 'custom' ? (customEngineInput.value || defaultSettings.engine) : engineSelect.value;
+            let chosen = engineSelect.value;
             let defaultChosen = defaultEngineSelect.value === 'custom' ? (defaultEngineCustom.value || chosen) : defaultEngineSelect.value;
-            settings.engine = defaultChosen || chosen;
-            // persist and apply immediately so UI reflects choice without reload
+            settings.engine = defaultChosen;
             saveSettings(settings);
             applySettings(settings);
             settingsPanel.style.display = 'none';
@@ -542,10 +659,8 @@
             e.preventDefault();
             const q = queryInput.value.trim();
             if (!q) return;
-            // on mobile the engineSelect may be hidden; prefer saved settings.engine in that case
-            const isEngineVisible = window.getComputedStyle(engineSelect).display !== 'none';
-            const base = (!isEngineVisible || !engineSelect.value) ? settings.engine : (engineSelect.value === 'custom' ? (customEngineInput.value || settings.engine) : engineSelect.value);
-            const url = (base || settings.engine) + encodeURIComponent(q);
+            const base = engineSelect.value; // Now using the hidden select's value
+            const url = base + encodeURIComponent(q);
             window.location.href = url
         });
         // clear button behaviour
@@ -645,8 +760,8 @@
         function submitSearch() {
             const q = queryInput.value.trim();
             if (!q) return;
-            const base = engineSelect.value === 'custom' ? (customEngineInput.value || settings.engine) : engineSelect.value;
-            const url = (base || settings.engine) + encodeURIComponent(q);
+            const base = engineSelect.value;
+            const url = base + encodeURIComponent(q);
             window.location.href = url;
         }
 
@@ -703,29 +818,8 @@
             }
         });
 
-        // ensure select icon backgrounds don't show white in dark theme
-        function fixSelectTheme() {
-            const s = document.getElementById('engineSelect');
-            if (!s) return;
-            // set a background-image using the currently selected engine's icon
-            const val = s.value;
-            let bg = '';
-            if (val === 'https://www.google.com/search?q=') bg = "url('icon/google.svg')";
-            else if (val === 'https://duckduckgo.com/?q=') bg = "url('icon/duckduckgo.svg')";
-            else if (val === 'https://www.bing.com/search?q=') bg = "url('icon/bing.svg')";
-            else if (val === 'https://search.brave.com/search?q=') bg = "url('icon/brave.svg')";
-            else bg = '';
-            s.style.backgroundImage = bg;
-            s.style.backgroundRepeat = 'no-repeat';
-            s.style.backgroundPosition = 'center';
-            s.style.backgroundSize = '25px 25px';
-        }
-        // run on load and whenever theme changes via toggle
-        fixSelectTheme();
-        // also update icon when engine select changed
-        document.getElementById('engineSelect').addEventListener('change', fixSelectTheme);
-    // populate dynamic year in footer
-    document.getElementById('year').textContent = new Date().getFullYear();
+        // populate dynamic year in footer
+        document.getElementById('year').textContent = new Date().getFullYear();
     </script>
 </body>
 
