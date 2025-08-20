@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Start Page — Minimal</title>
+    <link rel="icon" type="image/png/ico" href="https://jkp.my.id/assets//img//icons/favico.ico">
     <!-- Tailwind Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -16,6 +17,7 @@
         body {
             transition: background-image .35s ease, background-color .35s ease, color .2s ease;
             background-size: cover;
+            background-repeat: no-repeat;
             background-position: center;
         }
 
@@ -90,6 +92,14 @@
             cursor: pointer;
         }
 
+        /* responsive: hide engine select and custom input on mobile */
+        @media (max-width: 640px) {
+            .engine-select, #customEngineInput { display: none !important; }
+        }
+
+        /* hide theme toggle (disable switching to light) */
+        #toggleTheme { display: none !important; }
+
         /* subtle preset button hover */
         .presetBtn {
             border: 1px solid rgba(255, 255, 255, 0.04);
@@ -125,6 +135,15 @@
             width: 20px;
             height: 20px;
             filter: var(--icon-filter, none);
+        }
+
+        /* mascot image sizing to match the header avatar */
+        .mascot img {
+            width: 56px;
+            height: 56px;
+            border-radius: 9999px;
+            object-fit: cover;
+            display: block;
         }
 
         /* search button */
@@ -256,11 +275,17 @@
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col items-center justify-start pt-24" data-theme="dark">
+<body class="min-h-screen flex flex-col items-center justify-start pt-20" data-theme="dark">
     <main class="w-full max-w-2xl p-6 text-center">
         <div id="logo" class="mb-8">
-            <h1 class="text-3xl font-semibold mb-1">Halo, Kakak ✨</h1>
-            <p class="text-sm opacity-80">Start page minimal — tekan <kbd class="px-2 py-0.5 rounded glass">Enter</kbd> untuk mencari</p>
+            <div class="logo-row flex items-end justify-center gap-3 mb-1">
+                <!-- mascot image provided by user -->
+                <div class="mascot rounded-full p-1 flex items-center justify-center">
+                    <img src="./icon/maskot.webp" alt="Maskot" width="56" height="56" />
+                </div>
+                <h1 class="text-3xl font-semibold mb-0">Halo, Kakak ✨</h1>
+            </div>
+            <p class="text-sm pt-2 opacity-80">tekan <kbd class="px-2 py-0.5 rounded glass">Enter</kbd> untuk mencari</p>
         </div>
 
         <form id="searchForm" class="flex gap-3 items-center justify-center mb-6">
@@ -296,7 +321,7 @@
         <aside id="settingsPanel" class="mt-6 p-4 rounded-xl glass shadow-lg" style="display:none; text-align:left;">
             <h2 class="font-semibold mb-3">Pengaturan</h2>
             <div class="flex items-center gap-3 mb-3">
-                <label class="flex-1 text-sm">Tema</label>
+                <label class="flex-1 text-sm hidden">Tema</label>
                 <div class="flex gap-2 items-center">
                     <button id="toggleTheme" class="px-3 py-1 rounded glass">Toggle</button>
                 </div>
@@ -306,8 +331,10 @@
                 <label class="text-sm">Wallpaper</label>
                 <div class="flex gap-2 mt-2">
                     <button data-preset="none" class="presetBtn p-2 rounded-full glass text-sm">Default</button>
-                    <button data-preset="https://images.unsplash.com/photo-1503264116251-35a269479413?q=80&w=1400&auto=format&fit=crop&s=1" class="presetBtn p-2 rounded-full glass text-sm">Preset 1</button>
-                    <button data-preset="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1400&auto=format&fit=crop&s=1" class="presetBtn p-2 rounded-full glass text-sm">Preset 2</button>
+                    <button data-preset="./bg/bg01.webp" class="presetBtn p-2 rounded-full glass text-sm">Preset 1</button>
+                    <button data-preset="./bg/bg02.webp" class="presetBtn p-2 rounded-full glass text-sm">Preset 2</button>
+                    <button data-preset="./bg/bg04.webp" class="presetBtn p-2 rounded-full glass text-sm">Preset 3</button>
+                    <button data-preset="https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?q=80&w=1400&auto=format&fit=crop&s=1" class="presetBtn p-2 rounded-full glass text-sm">Preset 4</button>
                 </div>
                 <div class="mt-3 flex gap-2 items-center">
                     <input id="uploadBg" type="file" accept="image/*" class="text-sm" />
@@ -336,7 +363,7 @@
             </div>
         </aside>
 
-        <footer class="mt-8 text-xs opacity-70">Minimal Start Page • local settings</footer>
+    <footer class="mt-8 text-xs opacity-70">JKP • <span id="year"></span> • local settings</footer>
     </main>
 
     <!-- Floating settings button -->
@@ -515,7 +542,9 @@
             e.preventDefault();
             const q = queryInput.value.trim();
             if (!q) return;
-            const base = engineSelect.value === 'custom' ? (customEngineInput.value || settings.engine) : engineSelect.value;
+            // on mobile the engineSelect may be hidden; prefer saved settings.engine in that case
+            const isEngineVisible = window.getComputedStyle(engineSelect).display !== 'none';
+            const base = (!isEngineVisible || !engineSelect.value) ? settings.engine : (engineSelect.value === 'custom' ? (customEngineInput.value || settings.engine) : engineSelect.value);
             const url = (base || settings.engine) + encodeURIComponent(q);
             window.location.href = url
         });
@@ -695,6 +724,8 @@
         fixSelectTheme();
         // also update icon when engine select changed
         document.getElementById('engineSelect').addEventListener('change', fixSelectTheme);
+    // populate dynamic year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
     </script>
 </body>
 
