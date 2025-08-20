@@ -20,19 +20,71 @@
         }
 
         .glass {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.06);
             backdrop-filter: blur(12px);
             border-radius: 1rem;
+            /* thin border + subtle inset shadow for 3D glass look */
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: inset 0 1px 6px rgba(0,0,0,0.25);
         }
 
         [data-theme="light"] .glass {
-            background-color: rgba(255, 255, 255, 0.7);
+            background-color: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(15,23,42,0.06);
+            box-shadow: inset 0 1px 6px rgba(255,255,255,0.6);
         }
 
+        /* base element styling */
         select,
         input,
-        button {
-            border-radius: 1rem;
+        button,
+        textarea {
+            border-radius: 0.75rem;
+            border: 1px solid transparent;
+            transition: box-shadow .18s ease, border-color .15s ease, background-color .15s ease;
+        }
+
+        /* remove default focus outline and provide a minimal, clean focus */
+        input:focus, select:focus, textarea:focus, button:focus {
+            outline: none;
+            box-shadow: 0 6px 18px rgba(2,6,23,0.12);
+            border-color: rgba(59,130,246,0.6); /* subtle blue accent */
+        }
+
+        /* make .glass children slightly inset for 3d feel */
+        .glass > * {
+            box-shadow: inset 0 0 0 rgba(0,0,0,0);
+        }
+
+        /* style the small select (engine icon) to avoid white default backgrounds */
+        select.glass {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: transparent;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.6rem;
+            border-radius: 0.75rem;
+        }
+        /* hide IE/Edge expand arrow */
+        select.glass::-ms-expand { display: none; }
+
+        /* file input: hide native control and use themed label */
+        input[type="file"] { display: none; }
+        .file-label {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .5rem .75rem;
+            cursor: pointer;
+        }
+
+        /* subtle preset button hover */
+        .presetBtn {
+            border: 1px solid rgba(255,255,255,0.04);
+            box-shadow: inset 0 -8px 12px rgba(0,0,0,0.18);
         }
     </style>
 </head>
@@ -77,8 +129,9 @@
                     <button data-preset="https://images.unsplash.com/photo-1503264116251-35a269479413?q=80&w=1400&auto=format&fit=crop&s=1" class="presetBtn p-2 rounded glass text-sm">Preset 1</button>
                     <button data-preset="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1400&auto=format&fit=crop&s=1" class="presetBtn p-2 rounded glass text-sm">Preset 2</button>
                 </div>
-                <div class="mt-3 flex gap-2">
+                <div class="mt-3 flex gap-2 items-center">
                     <input id="uploadBg" type="file" accept="image/*" class="text-sm" />
+                    <label for="uploadBg" class="file-label glass text-sm p-2 rounded">📁 Pilih gambar...</label>
                     <button id="removeBg" class="p-2 rounded glass text-sm">Remove</button>
                 </div>
             </div>
@@ -220,7 +273,9 @@
         });
         toggleThemeBtn.addEventListener('click', () => {
             settings.theme = settings.theme === 'dark' ? 'light' : 'dark';
-            applyTheme(settings.theme)
+            applyTheme(settings.theme);
+            // persist theme change immediately
+            saveSettings(settings);
         });
         engineSelect.addEventListener('change', e => {
             customEngineInput.style.display = e.target.value === 'custom' ? 'block' : 'none'
@@ -233,6 +288,8 @@
                 const url = b.getAttribute('data-preset');
                 settings.wallpaper = url === 'none' ? null : url;
                 applyWallpaper(settings.wallpaper)
+                // persist wallpaper choice immediately (user expects preview -> saved)
+                saveSettings(settings);
             })
         });
         uploadBg.addEventListener('change', e => {
@@ -245,18 +302,23 @@
             reader.onload = () => {
                 settings.wallpaper = reader.result;
                 applyWallpaper(settings.wallpaper)
+                // save uploaded wallpaper
+                saveSettings(settings);
             };
             reader.readAsDataURL(f)
         });
         removeBg.addEventListener('click', () => {
             settings.wallpaper = null;
             applyWallpaper(null)
+            saveSettings(settings);
         });
         saveSettingsBtn.addEventListener('click', () => {
             let chosen = engineSelect.value === 'custom' ? (customEngineInput.value || defaultSettings.engine) : engineSelect.value;
             let defaultChosen = defaultEngineSelect.value === 'custom' ? (defaultEngineCustom.value || chosen) : defaultEngineSelect.value;
             settings.engine = defaultChosen || chosen;
+            // persist and apply immediately so UI reflects choice without reload
             saveSettings(settings);
+            applySettings(settings);
             settingsPanel.style.display = 'none';
             alert('Pengaturan tersimpan.')
         });
@@ -272,11 +334,39 @@
             queryInput.focus()
         });
         window.addEventListener('keydown', e => {
+            // focus search with Ctrl/Cmd+K
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
                 e.preventDefault();
                 queryInput.focus()
             }
+
+            // toggle settings with Ctrl+, or 's' key (when not typing)
+            const activeTag = document.activeElement && document.activeElement.tagName;
+            if (!['INPUT','TEXTAREA','SELECT'].includes(activeTag)) {
+                if ((e.ctrlKey || e.metaKey) && e.key === ',') {
+                    e.preventDefault();
+                    settingsPanel.style.display = settingsPanel.style.display === 'none' ? 'block' : 'none';
+                } else if (e.key.toLowerCase() === 's') {
+                    e.preventDefault();
+                    settingsPanel.style.display = settingsPanel.style.display === 'none' ? 'block' : 'none';
+                }
+            }
+
+            // close settings with Escape
+            if (e.key === 'Escape') {
+                if (settingsPanel.style.display !== 'none') settingsPanel.style.display = 'none';
+            }
         });
+
+        // ensure select icon backgrounds don't show white in dark theme
+        function fixSelectTheme() {
+            const s = document.getElementById('engineSelect');
+            if (!s) return;
+            if (document.body.getAttribute('data-theme') === 'dark') s.style.backgroundColor = 'transparent';
+            else s.style.backgroundColor = 'transparent';
+        }
+        // run on load and whenever theme changes via toggle
+        fixSelectTheme();
     </script>
 </body>
 
