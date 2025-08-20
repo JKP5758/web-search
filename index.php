@@ -24,14 +24,14 @@
             backdrop-filter: blur(12px);
             border-radius: 1rem;
             /* thin border + subtle inset shadow for 3D glass look */
-            border: 1px solid rgba(255,255,255,0.06);
-            box-shadow: inset 0 1px 6px rgba(0,0,0,0.25);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.25);
         }
 
         [data-theme="light"] .glass {
             background-color: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(15,23,42,0.06);
-            box-shadow: inset 0 1px 6px rgba(255,255,255,0.6);
+            border: 1px solid rgba(15, 23, 42, 0.06);
+            box-shadow: inset 0 1px 6px rgba(255, 255, 255, 0.6);
         }
 
         /* base element styling */
@@ -45,15 +45,19 @@
         }
 
         /* remove default focus outline and provide a minimal, clean focus */
-        input:focus, select:focus, textarea:focus, button:focus {
+        input:focus,
+        select:focus,
+        textarea:focus,
+        button:focus {
             outline: none;
-            box-shadow: 0 6px 18px rgba(2,6,23,0.12);
-            border-color: rgba(59,130,246,0.6); /* subtle blue accent */
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.12);
+            border-color: rgba(59, 130, 246, 0.6);
+            /* subtle blue accent */
         }
 
         /* make .glass children slightly inset for 3d feel */
-        .glass > * {
-            box-shadow: inset 0 0 0 rgba(0,0,0,0);
+        .glass>* {
+            box-shadow: inset 0 0 0 rgba(0, 0, 0, 0);
         }
 
         /* style the small select (engine icon) to avoid white default backgrounds */
@@ -66,13 +70,18 @@
             align-items: center;
             justify-content: center;
             padding: 0.6rem;
-            border-radius: 0.75rem;
         }
+
         /* hide IE/Edge expand arrow */
-        select.glass::-ms-expand { display: none; }
+        select.glass::-ms-expand {
+            display: none;
+        }
 
         /* file input: hide native control and use themed label */
-        input[type="file"] { display: none; }
+        input[type="file"] {
+            display: none;
+        }
+
         .file-label {
             display: inline-flex;
             align-items: center;
@@ -83,8 +92,166 @@
 
         /* subtle preset button hover */
         .presetBtn {
-            border: 1px solid rgba(255,255,255,0.04);
-            box-shadow: inset 0 -8px 12px rgba(0,0,0,0.18);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: inset 0 -8px 12px rgba(0, 0, 0, 0.18);
+        }
+
+        /* engine icon buttons */
+        .engineBtn {
+            width: 44px;
+            height: 54px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .25rem;
+            border-radius: 10rem;
+            /* fully rounded */
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.02);
+            cursor: pointer;
+        }
+
+        .engineBtn:hover {
+            transform: translateY(-2px);
+        }
+
+        .engineBtn.active {
+            box-shadow: 0 8px 20px rgba(2, 6, 23, 0.18);
+            border-color: rgba(59, 130, 246, 0.6);
+            color: rgba(59, 130, 246, 1);
+        }
+
+        .engine-icon {
+            width: 20px;
+            height: 20px;
+            filter: var(--icon-filter, none);
+        }
+
+        /* search button */
+        .btn-search {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border: 0;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.04);
+            color: #38bdf8;
+            /* cyan-ish */
+            cursor: pointer;
+        }
+
+        .btn-search:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-1px);
+        }
+
+        .btn-search svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* dropdown engine select styling */
+        .engine-select {
+            width: 68px;
+            height: 54px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .5rem;
+            border-radius: 9999px;
+            text-indent: -9999px;
+            /* hide text visually so we can show icon */
+            overflow: hidden;
+            position: relative;
+        }
+
+        .engine-select option {
+            text-indent: 0;
+        }
+
+        /* input group: clear + search inside the right side */
+        .input-group {
+            position: relative;
+        }
+
+        .input-group .btn-clear {
+            position: absolute;
+            right: 48px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 0;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            cursor: pointer;
+        }
+
+        .input-group .btn-clear:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .input-group .btn-search {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* make primary fields and controls pill-shaped */
+        input.p-3,
+        .engine-select,
+        .btn-search,
+        .file-label,
+        .presetBtn,
+        .engineBtn,
+        #saveSettings,
+        #cancelSettings,
+        #resetBtn,
+        select.p-2 {
+            border-radius: 9999px;
+        }
+
+        /* ensure the settings panel buttons visually match when small */
+        #saveSettings,
+        #cancelSettings,
+        #resetBtn {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        /* suggestions dropdown */
+        .suggestions {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(100% + 8px);
+            background: rgba(2, 6, 23, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+            overflow: hidden;
+            z-index: 40;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .suggestion-item {
+            padding: .6rem .75rem;
+            cursor: pointer;
+            color: #fff;
+            text-align: left;
+        }
+
+        .suggestion-item:hover,
+        .suggestion-item.active {
+            background: rgba(255, 255, 255, 0.04);
         }
     </style>
 </head>
@@ -97,19 +264,32 @@
         </div>
 
         <form id="searchForm" class="flex gap-3 items-center justify-center mb-6">
-            <select id="engineSelect" class="appearance-none p-3 w-12 h-12 glass flex items-center justify-center text-center">
-                <option value="https://www.google.com/search?q=" selected>🌐</option>
-                <option value="https://duckduckgo.com/?q=">🦆</option>
-                <option value="https://www.bing.com/search?q=">🅱️</option>
-                <option value="https://search.brave.com/search?q=">🦁</option>
-                <option value="custom">✏️</option>
+            <!-- engine picker as dropdown with icon background set by JS -->
+            <select id="engineSelect" class="glass engine-select p-3 rounded-full" title="Pilih mesin pencari">
+                <option value="https://www.google.com/search?q=">Google</option>
+                <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
+                <option value="https://www.bing.com/search?q=">Bing</option>
+                <option value="https://search.brave.com/search?q=">Brave</option>
             </select>
 
             <input id="customEngineInput" class="p-3 flex-1 glass text-sm" placeholder="Custom engine base URL" style="display:none;" />
 
-            <input id="queryInput" type="search" name="q" autocomplete="off" class="p-3 flex-1 text-lg font-medium glass placeholder:text-white/50" placeholder="Cari sesuatu..." />
-
-            <button type="submit" class="p-3 w-12 h-12 glass">🔎</button>
+            <div class="input-group relative flex-1">
+                <input id="queryInput" type="search" name="q" autocomplete="off" class="p-3 w-full text-lg font-medium glass placeholder:text-white/50" placeholder="Cari sesuatu..." />
+                <div id="suggestions" class="suggestions" style="display:none;"></div>
+                <button type="button" id="clearInput" aria-label="Clear" class="btn-clear" title="Clear" style="display:none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+                <button type="submit" aria-label="Search" class="btn-search glass" title="Search">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
+                    </svg>
+                </button>
+            </div>
         </form>
 
         <!-- Settings panel -->
@@ -125,34 +305,34 @@
             <div class="mb-3">
                 <label class="text-sm">Wallpaper</label>
                 <div class="flex gap-2 mt-2">
-                    <button data-preset="none" class="presetBtn p-2 rounded glass text-sm">Default</button>
-                    <button data-preset="https://images.unsplash.com/photo-1503264116251-35a269479413?q=80&w=1400&auto=format&fit=crop&s=1" class="presetBtn p-2 rounded glass text-sm">Preset 1</button>
-                    <button data-preset="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1400&auto=format&fit=crop&s=1" class="presetBtn p-2 rounded glass text-sm">Preset 2</button>
+                    <button data-preset="none" class="presetBtn p-2 rounded-full glass text-sm">Default</button>
+                    <button data-preset="https://images.unsplash.com/photo-1503264116251-35a269479413?q=80&w=1400&auto=format&fit=crop&s=1" class="presetBtn p-2 rounded-full glass text-sm">Preset 1</button>
+                    <button data-preset="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1400&auto=format&fit=crop&s=1" class="presetBtn p-2 rounded-full glass text-sm">Preset 2</button>
                 </div>
                 <div class="mt-3 flex gap-2 items-center">
                     <input id="uploadBg" type="file" accept="image/*" class="text-sm" />
-                    <label for="uploadBg" class="file-label glass text-sm p-2 rounded">📁 Pilih gambar...</label>
-                    <button id="removeBg" class="p-2 rounded glass text-sm">Remove</button>
+                    <label for="uploadBg" class="file-label glass text-sm p-2 rounded-full">📁 Pilih gambar...</label>
+                    <button id="removeBg" class="p-2 rounded-full glass text-sm">Remove</button>
                 </div>
             </div>
 
             <div class="mb-3">
                 <label class="text-sm">Default Search Engine</label>
                 <div class="mt-2 text-sm">
-                    <select id="defaultEngine" class="p-2 rounded glass w-full">
+                    <select id="defaultEngine" class="p-2 rounded-full glass w-full">
                         <option value="https://www.google.com/search?q=">Google</option>
                         <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
                         <option value="https://www.bing.com/search?q=">Bing</option>
                         <option value="custom">Custom...</option>
                     </select>
-                    <input id="defaultEngineCustom" placeholder="Custom engine base URL" class="mt-2 p-2 rounded glass w-full" style="display:none;" />
+                    <input id="defaultEngineCustom" placeholder="Custom engine base URL" class="mt-2 p-2 rounded-full glass w-full" style="display:none;" />
                 </div>
             </div>
 
             <div class="flex gap-2 mt-4">
-                <button id="saveSettings" class="px-4 py-2 rounded glass">Save</button>
-                <button id="cancelSettings" class="px-4 py-2 rounded glass">Close</button>
-                <button id="resetBtn" class="px-4 py-2 rounded glass text-red-500">Reset</button>
+                <button id="saveSettings" class="px-4 py-2 rounded-full glass">Save</button>
+                <button id="cancelSettings" class="px-4 py-2 rounded-full glass">Close</button>
+                <button id="resetBtn" class="px-4 py-2 rounded-full glass text-red-500">Reset</button>
             </div>
         </aside>
 
@@ -221,6 +401,8 @@
         const removeBg = document.getElementById('removeBg');
         const queryInput = document.getElementById('queryInput');
         const searchForm = document.getElementById('searchForm');
+        const engineButtons = document.querySelectorAll('.engineBtn');
+        const clearBtn = document.getElementById('clearInput');
 
         let settings = loadSettings();
 
@@ -242,8 +424,11 @@
         function applySettings(s) {
             applyTheme(s.theme);
             applyWallpaper(s.wallpaper);
-            engineSelect.value = ['https://www.google.com/search?q=', 'https://duckduckgo.com/?q=', 'https://www.bing.com/search?q=', 'https://search.brave.com/search?q='].includes(s.engine) ? s.engine : 'custom';
-            if (engineSelect.value === 'custom') {
+            // when using dropdown, set selected value and custom input
+            const known = ['https://www.google.com/search?q=', 'https://duckduckgo.com/?q=', 'https://www.bing.com/search?q=', 'https://search.brave.com/search?q='];
+            const matched = known.includes(s.engine) ? s.engine : 'custom';
+            engineSelect.value = matched === 'custom' ? 'custom' : matched;
+            if (matched === 'custom') {
                 customEngineInput.style.display = 'block';
                 customEngineInput.value = s.engine
             } else customEngineInput.style.display = 'none';
@@ -278,8 +463,12 @@
             saveSettings(settings);
         });
         engineSelect.addEventListener('change', e => {
-            customEngineInput.style.display = e.target.value === 'custom' ? 'block' : 'none'
+            const v = e.target.value;
+            customEngineInput.style.display = v === 'custom' ? 'block' : 'none';
+            // update visual icon background
+            fixSelectTheme();
         });
+        // remove old engine button handlers (not used when dropdown present)
         defaultEngineSelect.addEventListener('change', e => {
             defaultEngineCustom.style.display = e.target.value === 'custom' ? 'block' : 'none'
         });
@@ -330,6 +519,133 @@
             const url = (base || settings.engine) + encodeURIComponent(q);
             window.location.href = url
         });
+        // clear button behaviour
+        queryInput.addEventListener('input', () => {
+            clearBtn.style.display = queryInput.value ? 'inline-flex' : 'none';
+            scheduleSuggest(queryInput.value);
+        });
+        clearBtn.addEventListener('click', () => {
+            queryInput.value = '';
+            clearBtn.style.display = 'none';
+            queryInput.focus();
+            hideSuggestions();
+        });
+
+        // Suggestions: JSONP to Google suggest
+        const suggestionsEl = document.getElementById('suggestions');
+        let suggestTimer = null;
+        let currentScript = null;
+        let activeIndex = -1;
+
+        function scheduleSuggest(q) {
+            if (suggestTimer) clearTimeout(suggestTimer);
+            if (!q) {
+                hideSuggestions();
+                return;
+            }
+            suggestTimer = setTimeout(() => fetchSuggest(q), 160);
+        }
+
+        function fetchSuggest(q) {
+            // cleanup previous
+            if (currentScript) {
+                document.head.removeChild(currentScript);
+                currentScript = null;
+            }
+            const cbName = 'gSuggestCB_' + Date.now();
+            window[cbName] = function(data) {
+                try {
+                    renderSuggestions(data && data[1] ? data[1] : []);
+                } finally {
+                    delete window[cbName];
+                }
+            };
+            const url = 'https://suggestqueries.google.com/complete/search?client=firefox&q=' + encodeURIComponent(q) + '&callback=' + cbName;
+            currentScript = document.createElement('script');
+            currentScript.src = url;
+            currentScript.onerror = () => {
+                delete window[cbName];
+                if (currentScript) {
+                    try {
+                        document.head.removeChild(currentScript);
+                    } catch (e) {}
+                    currentScript = null;
+                }
+            };
+            document.head.appendChild(currentScript);
+        }
+
+        function renderSuggestions(list) {
+            suggestionsEl.innerHTML = '';
+            activeIndex = -1;
+            if (!list || !list.length) {
+                hideSuggestions();
+                return;
+            }
+            list.forEach((s, i) => {
+                const it = document.createElement('div');
+                it.className = 'suggestion-item';
+                it.textContent = s;
+                it.addEventListener('mousedown', (e) => { // use mousedown to avoid blur before click
+                    e.preventDefault();
+                    selectSuggestion(i);
+                    submitSearch();
+                });
+                suggestionsEl.appendChild(it);
+            });
+            suggestionsEl.style.display = 'block';
+        }
+
+        function hideSuggestions() {
+            suggestionsEl.style.display = 'none';
+            suggestionsEl.innerHTML = '';
+            activeIndex = -1;
+        }
+
+        function selectSuggestion(i) {
+            const items = suggestionsEl.querySelectorAll('.suggestion-item');
+            if (!items.length) return;
+            items.forEach(it => it.classList.remove('active'));
+            const chosen = items[i];
+            if (!chosen) return;
+            chosen.classList.add('active');
+            activeIndex = i;
+            queryInput.value = chosen.textContent;
+        }
+
+        function submitSearch() {
+            const q = queryInput.value.trim();
+            if (!q) return;
+            const base = engineSelect.value === 'custom' ? (customEngineInput.value || settings.engine) : engineSelect.value;
+            const url = (base || settings.engine) + encodeURIComponent(q);
+            window.location.href = url;
+        }
+
+        // keyboard navigation
+        queryInput.addEventListener('keydown', (e) => {
+            const items = suggestionsEl.querySelectorAll('.suggestion-item');
+            if (suggestionsEl.style.display === 'block' && items.length) {
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    selectSuggestion((activeIndex + 1) % items.length);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    selectSuggestion((activeIndex - 1 + items.length) % items.length);
+                } else if (e.key === 'Enter') {
+                    if (activeIndex >= 0) {
+                        e.preventDefault();
+                        submitSearch();
+                    }
+                } else if (e.key === 'Escape') {
+                    hideSuggestions();
+                }
+            }
+        });
+
+        // hide suggestions on blur
+        queryInput.addEventListener('blur', () => {
+            setTimeout(hideSuggestions, 150);
+        });
         window.addEventListener('load', () => {
             queryInput.focus()
         });
@@ -342,7 +658,7 @@
 
             // toggle settings with Ctrl+, or 's' key (when not typing)
             const activeTag = document.activeElement && document.activeElement.tagName;
-            if (!['INPUT','TEXTAREA','SELECT'].includes(activeTag)) {
+            if (!['INPUT', 'TEXTAREA', 'SELECT'].includes(activeTag)) {
                 if ((e.ctrlKey || e.metaKey) && e.key === ',') {
                     e.preventDefault();
                     settingsPanel.style.display = settingsPanel.style.display === 'none' ? 'block' : 'none';
@@ -362,11 +678,23 @@
         function fixSelectTheme() {
             const s = document.getElementById('engineSelect');
             if (!s) return;
-            if (document.body.getAttribute('data-theme') === 'dark') s.style.backgroundColor = 'transparent';
-            else s.style.backgroundColor = 'transparent';
+            // set a background-image using the currently selected engine's icon
+            const val = s.value;
+            let bg = '';
+            if (val === 'https://www.google.com/search?q=') bg = "url('icon/google.svg')";
+            else if (val === 'https://duckduckgo.com/?q=') bg = "url('icon/duckduckgo.svg')";
+            else if (val === 'https://www.bing.com/search?q=') bg = "url('icon/bing.svg')";
+            else if (val === 'https://search.brave.com/search?q=') bg = "url('icon/brave.svg')";
+            else bg = '';
+            s.style.backgroundImage = bg;
+            s.style.backgroundRepeat = 'no-repeat';
+            s.style.backgroundPosition = 'center';
+            s.style.backgroundSize = '25px 25px';
         }
         // run on load and whenever theme changes via toggle
         fixSelectTheme();
+        // also update icon when engine select changed
+        document.getElementById('engineSelect').addEventListener('change', fixSelectTheme);
     </script>
 </body>
 
