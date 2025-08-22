@@ -20,8 +20,6 @@
         .glass {
             background-color: rgba(255, 255, 255, 0.06);
             backdrop-filter: blur(12px);
-            border-radius: 1rem;
-            /* thin border + subtle inset shadow for 3D glass look */
             border: 1px solid rgba(255, 255, 255, 0.06);
             box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.25);
         }
@@ -30,27 +28,6 @@
             background-color: rgba(255, 255, 255, 0.85);
             border: 1px solid rgba(15, 23, 42, 0.06);
             box-shadow: inset 0 1px 6px rgba(255, 255, 255, 0.6);
-        }
-
-        /* base element styling */
-        select,
-        input,
-        button,
-        textarea {
-            border-radius: 0.75rem;
-            border: 1px solid transparent;
-            transition: box-shadow .18s ease, border-color .15s ease, background-color .15s ease;
-        }
-
-        /* remove default focus outline and provide a minimal, clean focus */
-        input:focus,
-        select:focus,
-        textarea:focus,
-        button:focus {
-            outline: none;
-            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.12);
-            border-color: rgba(59, 130, 246, 0.6);
-            /* subtle blue accent */
         }
 
         /* make .glass children slightly inset for 3d feel */
@@ -71,254 +48,10 @@
             cursor: pointer;
         }
 
-        /* responsive: hide custom input on mobile */
-        @media (max-width: 640px) {
-            #customEngineInput {
-                display: none !important;
-            }
-        }
-
-        /* hide theme toggle (disable switching to light) */
-        #toggleTheme {
-            display: none !important;
-        }
-
-        /* subtle preset button hover */
-        .presetBtn {
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            box-shadow: inset 0 -8px 12px rgba(0, 0, 0, 0.18);
-        }
-
-        /* engine icon buttons */
-        .engineBtn {
-            width: 44px;
-            height: 44px;
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: .25rem;
-            border-radius: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            background: rgba(255, 255, 255, 0.02);
-            cursor: pointer;
-            transition: transform .15s ease, background .15s ease, border-color .15s ease;
-        }
-
-        .engineBtn:hover {
-            background: rgba(255, 255, 255, 0.06);
-        }
-
-        .engineBtn.active {
-            box-shadow: 0 8px 20px rgba(2, 6, 23, 0.18);
-            border-color: rgba(59, 130, 246, 0.6);
-            color: rgba(59, 130, 246, 1);
-        }
-
-        .engine-icon {
-            width: 20px;
-            height: 20px;
-            filter: var(--icon-filter, none);
-        }
-
-        /* mascot image sizing to match the header avatar */
-        .mascot img {
-            width: 56px;
-            height: 56px;
-            border-radius: 9999px;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* search button */
-        .btn-search {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            height: 44px;
-            border: 0;
-            border-radius: 9999px;
-            background: rgba(255, 255, 255, 0.04);
-            color: #38bdf8;
-            /* cyan-ish */
-            cursor: pointer;
-        }
-
-        .btn-search:hover {
-            background: rgba(255, 255, 255, 0.06);
-            transform: translateY(-1px);
-        }
-
-        .btn-search svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* custom dropdown styling */
-        .custom-dropdown-container {
-            position: relative;
-        }
-
-        .custom-dropdown-trigger {
-            width: 68px;
-            height: 54px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: .5rem;
-            border-radius: 9999px;
-            cursor: pointer;
-        }
-
-        .custom-dropdown-trigger:hover {
-            background-color: rgba(255, 255, 255, 0.08);
-        }
-
-        .custom-dropdown-trigger img {
-            width: 25px;
-            height: 25px;
-        }
-
-        .custom-dropdown-menu {
-            position: absolute;
-            text-align: left;
-            left: 0;
-            top: 100%;
-            margin-top: 8px;
-            width: 12rem;
-            padding: 8px;
-            border-radius: 12px;
-            z-index: 50;
-        }
-
-        .custom-dropdown-menu li {
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .custom-dropdown-menu li:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        /* input group: clear + search inside the right side */
-        .input-group {
-            position: relative;
-        }
-
-        .input-group .btn-clear {
-            position: absolute;
-            right: 48px;
-            top: 50%;
-            transform: translateY(-50%);
-            border: 0;
-            background: transparent;
-            color: rgba(255, 255, 255, 0.7);
-            width: 28px;
-            height: 28px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 9999px;
-            cursor: pointer;
-        }
-
-        .input-group .btn-clear:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .input-group .btn-search {
-            position: absolute;
-            right: 6px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        /* make primary fields and controls pill-shaped */
-        input.p-3,
-        .custom-dropdown-trigger,
-        .btn-search,
-        .file-label,
-        .presetBtn,
-        .engineBtn,
-        #saveSettings,
-        #cancelSettings,
-        #resetBtn,
-        select.p-2 {
-            border-radius: 9999px;
-        }
-
-        /* ensure the settings panel buttons visually match when small */
-        #saveSettings,
-        #cancelSettings,
-        #resetBtn {
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-
-        /* suggestions dropdown */
-        .suggestions {
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: calc(100% + 8px);
-            background: rgba(2, 6, 23, 0.6);
-            backdrop-filter: blur(8px);
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
-            overflow: hidden;
-            z-index: 40;
-            max-height: 280px;
-            overflow-y: auto;
-        }
-
-        .suggestion-item {
-            padding: .6rem .75rem;
-            cursor: pointer;
-            color: #fff;
-            text-align: left;
-        }
-
-        .suggestion-item:hover,
-        .suggestion-item.active {
-            background: rgba(255, 255, 255, 0.04);
-        }
-
         /* CLS FIX: Settings panel as a fixed overlay */
-        #settingsPanel {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(2, 6, 23, 0.5);
-            /* Semi-transparent overlay background */
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
         #settingsPanel.is-visible {
             opacity: 1;
             pointer-events: auto;
-        }
-
-        #settingsPanel .settings-content {
-            width: 100%;
-            max-width: 28rem;
-            padding: 1.5rem;
-            background-color: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(12px);
-            border-radius: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.25);
         }
     </style>
 </head>
@@ -333,52 +66,52 @@
                 </div>
                 <h1 class="text-3xl font-semibold mb-0">Halo, Kakak ✨</h1>
             </div>
-            <p class="text-sm pt-2 opacity-80">tekan <kbd class="px-2 py-0.5 rounded glass">Enter</kbd> untuk mencari</p>
+            <p class="text-sm pt-2 opacity-80">tekan <kbd class="px-2 py-0.5 rounded-md glass">Enter</kbd> untuk mencari</p>
         </div>
 
         <form id="searchForm" class="flex gap-3 items-center justify-center mb-6">
             <!-- Container untuk dropdown kustom -->
-            <div class="custom-dropdown-container relative">
-                <div id="engineDropdownTrigger" class="custom-dropdown-trigger glass" title="Pilih mesin pencari">
-                    <img id="selectedEngineIcon" src="./icon/google.svg" alt="Google">
+            <div class="custom-dropdown-container relative max-sm:hidden">
+                <div id="engineDropdownTrigger" class="custom-dropdown-trigger glass w-12 h-12 flex items-center justify-center p-2 rounded-full cursor-pointer hover:bg-white/10 transition-colors" title="Pilih mesin pencari">
+                    <img id="selectedEngineIcon" src="./icon/google.svg" alt="Google" class="w-6 h-6">
                 </div>
-                <ul id="engineDropdownMenu" class="custom-dropdown-menu glass hidden">
-                    <li data-value="https://www.google.com/search?q=" data-icon="./icon/google.svg">
+                <ul id="engineDropdownMenu" class="custom-dropdown-menu glass hidden absolute left-0 top-full mt-2 w-48 p-2 rounded-xl z-50 text-left">
+                    <li data-value="https://www.google.com/search?q=" data-icon="./icon/google.svg" class="p-2 rounded-md cursor-pointer transition-colors hover:bg-white/10">
                         <img src="./icon/google.svg" alt="Google" class="inline-block w-6 h-6 mr-2" /> Google
                     </li>
-                    <li data-value="https://duckduckgo.com/?q=" data-icon="./icon/duckduckgo.svg">
+                    <li data-value="https://duckduckgo.com/?q=" data-icon="./icon/duckduckgo.svg" class="p-2 rounded-md cursor-pointer transition-colors hover:bg-white/10">
                         <img src="./icon/duckduckgo.svg" alt="DuckDuckGo" class="inline-block w-6 h-6 mr-2" /> DuckDuckGo
                     </li>
-                    <li data-value="https://www.bing.com/search?q=" data-icon="./icon/bing.svg">
+                    <li data-value="https://www.bing.com/search?q=" data-icon="./icon/bing.svg" class="p-2 rounded-md cursor-pointer transition-colors hover:bg-white/10">
                         <img src="./icon/bing.svg" alt="Bing" class="inline-block w-6 h-6 mr-2" /> Bing
                     </li>
-                    <li data-value="https://search.brave.com/search?q=" data-icon="./icon/brave.svg">
+                    <li data-value="https://search.brave.com/search?q=" data-icon="./icon/brave.svg" class="p-2 rounded-md cursor-pointer transition-colors hover:bg-white/10">
                         <img src="./icon/brave.svg" alt="Brave" class="inline-block w-6 h-6 mr-2" /> Brave
                     </li>
                 </ul>
             </div>
 
             <!-- <select> asli disembunyikan untuk fungsionalitas formulir -->
-            <select id="engineSelect" style="display:none;">
+            <select id="engineSelect" class="hidden">
                 <option value="https://www.google.com/search?q=">Google</option>
                 <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
                 <option value="https://www.bing.com/search?q=">Bing</option>
                 <option value="https://search.brave.com/search?q=">Brave</option>
             </select>
 
-            <input id="customEngineInput" class="p-3 flex-1 glass text-sm" placeholder="Custom engine base URL" style="display:none;" />
+            <input id="customEngineInput" class="p-3 flex-1 glass text-sm rounded-full focus:outline-none focus:shadow-xl focus:border-blue-500 transition-all" placeholder="Custom engine base URL" style="display:none;" />
 
             <div class="input-group relative flex-1">
-                <input id="queryInput" type="search" name="q" autocomplete="off" class="p-3 w-full text-lg font-medium glass placeholder:text-white/50 overflow-hidden text-ellipsis" placeholder="Cari sesuatu..." />
-                <div id="suggestions" class="suggestions" style="display:none;"></div>
-                <button type="button" id="clearInput" aria-label="Clear" class="btn-clear" title="Clear" style="display:none;">
+                <input id="queryInput" type="search" name="q" autocomplete="off" class="p-3 w-full text-lg font-medium glass placeholder:text-white/50 overflow-hidden text-ellipsis rounded-full focus:outline-none focus:shadow-xl focus:border-blue-500 transition-all" placeholder="Cari sesuatu..." />
+                <div id="suggestions" class="suggestions absolute inset-x-0 top-full mt-2 glass rounded-xl shadow-xl overflow-hidden z-40 max-h-72 overflow-y-auto" style="display:none;"></div>
+                <button type="button" id="clearInput" aria-label="Clear" class="btn-clear absolute right-12 top-1/2 -translate-y-1/2 border-0 bg-transparent text-white/70 w-7 h-7 flex items-center justify-center rounded-full cursor-pointer hover:bg-white/5 transition-colors" title="Clear" style="display:none;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
                         <line x1="18" y1="6" x2="6" y2="18" />
                         <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
                 </button>
-                <button type="submit" aria-label="Search" class="btn-search glass" title="Search">
-                    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <button type="submit" aria-label="Search" class="btn-search w-11 h-11 flex items-center justify-center border-0 rounded-full bg-white/10 text-cyan-400 cursor-pointer hover:bg-white/20  transition-all absolute right-2 top-1/2 -translate-y-1/2" title="Search">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
                         <circle cx="11" cy="11" r="7"></circle>
                         <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
                     </svg>
@@ -387,67 +120,69 @@
         </form>
 
         <!-- Settings panel as a fixed overlay to prevent CLS -->
-        <aside id="settingsPanel">
-            <div class="settings-content text-left">
+        <aside id="settingsPanel" class="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity">
+            <div class="settings-content w-full max-w-md p-6 glass rounded-xl text-left">
                 <h2 class="font-semibold mb-3">Pengaturan</h2>
                 <div class="flex items-center gap-3 mb-3">
                     <label class="flex-1 text-sm hidden">Tema</label>
                     <div class="flex gap-2 items-center">
-                        <button id="toggleTheme" class="px-3 py-1 rounded glass">Toggle</button>
+                        <button id="toggleTheme" class="px-3 py-1 rounded-md glass hidden">Toggle</button>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="text-sm">Wallpaper</label>
-                    <div class="flex gap-2 mt-2">
-                        <button data-preset="none" class="presetBtn p-2 rounded-full glass text-sm">Default</button>
-                        <button data-preset="./bg/bg01.webp" class="presetBtn p-2 rounded-full glass text-sm">Preset 1</button>
-                        <button data-preset="./bg/bg02.webp" class="presetBtn p-2 rounded-full glass text-sm">Preset 2</button>
-                        <button data-preset="./bg/bg04.webp" class="presetBtn p-2 rounded-full glass text-sm">Preset 3</button>
-                        <button data-preset="https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?q=80&w=1400&auto=format&fit=crop&s=1" class="presetBtn p-2 rounded-full glass text-sm">Preset 4</button>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <button data-preset="none" class="presetBtn p-2 rounded-full glass text-sm transition-transform hover:bg-white/10">Default</button>
+                        <button data-preset="./bg/bg01.webp" class="presetBtn p-2 rounded-full glass text-sm transition-transform hover:bg-white/10">Preset 1</button>
+                        <button data-preset="./bg/bg02.webp" class="presetBtn p-2 rounded-full glass text-sm transition-transform hover:bg-white/10">Preset 2</button>
+                        <button data-preset="./bg/bg04.webp" class="presetBtn p-2 rounded-full glass text-sm transition-transform hover:bg-white/10">Preset 3</button>
+                        <button data-preset="https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?q=80&w=1400&auto=format&fit=crop&s=1" class="presetBtn p-2 rounded-full glass text-sm transition-transform hover:bg-white/10">Preset 4</button>
                     </div>
                     <div class="mt-3 flex gap-2 items-center">
                         <input id="uploadBg" type="file" accept="image/*" class="text-sm" />
-                        <label for="uploadBg" class="file-label glass text-sm p-2 rounded-full">📁 Pilih gambar...</label>
-                        <button id="removeBg" class="p-2 rounded-full glass text-sm">Remove</button>
+                        <label for="uploadBg" class="file-label glass text-sm p-2 rounded-full transition-transform hover:bg-white/10">📁 Pilih gambar...</label>
+                        <button id="removeBg" class="p-2 rounded-full glass text-sm transition-transform hover:bg-white/10">Remove</button>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="text-sm">Default Search Engine</label>
                     <div id="defaultEngineButtons" class="flex flex-wrap gap-2 mt-2">
-                        <button class="engineBtn" data-value="https://www.google.com/search?q=">
-                            <img src="./icon/google.svg" class="engine-icon" alt="Google">
+                        <button class="engineBtn w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full glass cursor-pointer transition-transform hover:bg-white/10" data-value="https://www.google.com/search?q=">
+                            <img src="./icon/google.svg" class="engine-icon w-5 h-5" alt="Google">
                         </button>
-                        <button class="engineBtn" data-value="https://duckduckgo.com/?q=">
-                            <img src="./icon/duckduckgo.svg" class="engine-icon" alt="DuckDuckGo">
+                        <button class="engineBtn w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full glass cursor-pointer transition-transform hover:bg-white/10" data-value="https://duckduckgo.com/?q=">
+                            <img src="./icon/duckduckgo.svg" class="engine-icon w-5 h-5" alt="DuckDuckGo">
                         </button>
-                        <button class="engineBtn" data-value="https://www.bing.com/search?q=">
-                            <img src="./icon/bing.svg" class="engine-icon" alt="Bing">
+                        <button class="engineBtn w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full glass cursor-pointer transition-transform hover:bg-white/10" data-value="https://www.bing.com/search?q=">
+                            <img src="./icon/bing.svg" class="engine-icon w-5 h-5" alt="Bing">
                         </button>
-                        <button class="engineBtn" data-value="https://search.brave.com/search?q=">
-                            <img src="./icon/brave.svg" class="engine-icon" alt="Brave">
+                        <button class="engineBtn w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full glass cursor-pointer transition-transform hover:bg-white/10" data-value="https://search.brave.com/search?q=">
+                            <img src="./icon/brave.svg" class="engine-icon w-5 h-5" alt="Brave">
                         </button>
-                        <button class="engineBtn" data-value="custom">
-                            <svg class="engine-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <button class="engineBtn w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full glass cursor-pointer transition-transform hover:bg-white/10" data-value="custom">
+                            <svg class="engine-icon w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 20v-8m0 0V4m0 8h8m-8 0H4" />
                             </svg>
                         </button>
                     </div>
-                    <input id="defaultEngineCustom" placeholder="Custom engine base URL" class="mt-2 p-2 rounded-full glass w-full" style="display:none;" />
+                    <input id="defaultEngineCustom" placeholder="Custom engine base URL" class="mt-2 p-2 rounded-full glass w-full focus:outline-none focus:shadow-xl focus:border-blue-500 transition-all" style="display:none;" />
                 </div>
 
-                <div class="flex gap-2 mt-4">
-                    <button id="saveSettings" class="px-4 py-2 rounded-full glass">Save</button>
-                    <button id="cancelSettings" class="px-4 py-2 rounded-full glass">Close</button>
-                    <button id="resetBtn" class="px-4 py-2 rounded-full glass text-red-500">Reset</button>
+                <div class="flex justify-between mt-4">
+                    <div class="flex gap-2">
+                        <button id="saveSettings" class="px-4 py-2 rounded-full glass transition-transform hover:bg-white/10">Save</button>
+                        <button id="cancelSettings" class="px-4 py-2 rounded-full glass transition-transform hover:bg-white/10">Close</button>
+                    </div>
+                    <button id="resetBtn" class="px-4 py-2 rounded-full glass transition-transform hover:bg-white/10 text-red-500/80">Reset</button>
                 </div>
             </div>
         </aside>
     </main>
 
     <!-- Floating settings button -->
-    <button id="settingsBtn" class="fixed bottom-4 right-4 p-3 glass shadow-lg">⚙️</button>
+    <button id="settingsBtn" class="fixed bottom-4 right-4 p-3 glass rounded-full shadow-lg">⚙️</button>
 
     <footer class="mt-8 text-xs opacity-70 text-center w-full pb-4">
         © <a href="http://jkp.my.id" target="_blank" rel="noopener noreferrer">JKP</a> • <span id="year"></span> • local settings
@@ -537,7 +272,15 @@
             'qq',
             'judol',
             '88',
-            '77'
+            '77',
+            '99',
+            '11',
+            'zeus',
+            'gates',
+            'hoki',
+            'win',
+            'toto'
+
             // add more terms here as needed
         ];
 
@@ -772,7 +515,7 @@
             }
             filtered.forEach((s, i) => {
                 const it = document.createElement('div');
-                it.className = 'suggestion-item';
+                it.className = 'suggestion-item p-2 px-3 cursor-pointer text-white text-left hover:bg-white/10';
                 it.textContent = s;
                 it.addEventListener('mousedown', (e) => { // use mousedown to avoid blur before click
                     e.preventDefault();
