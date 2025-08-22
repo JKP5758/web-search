@@ -14,14 +14,14 @@
 <body class="min-h-screen flex flex-col items-center justify-start pt-20 transition-all duration-300" data-theme="dark">
     <main class="w-full max-w-2xl p-6 text-center">
         <div id="logo" class="mb-8">
-            <div class="logo-row flex items-end justify-center gap-3 mb-1">
-                <!-- mascot image provided by user -->
-                <div class="mascot rounded-full h-14 w-14 flex items-center justify-center overflow-hidden">
-                    <img src="./icon/maskot.webp" alt="Maskot" />
+                <div class="logo-row flex items-end justify-center gap-3 mb-1">
+                <!-- mascot image provided by user (wrapped so it can be hidden) -->
+                <div id="mascotWrap" class="mascot relative rounded-full h-14 w-14 flex items-center justify-center overflow-hidden">
+                    <img id="mascotImg" src="./icon/maskot.webp" alt="Maskot" class="w-full h-full object-cover" />
                 </div>
-                <h1 class="text-3xl font-semibold mb-0">Halo, Kakak ✨</h1>
+                <h1 id="headerTitle" class="text-3xl font-semibold mb-0">Halo, Kakak ✨</h1>
             </div>
-            <p class="text-sm pt-2 opacity-80">tekan <kbd class="px-2 py-0.5 rounded-md
+            <p id="headerSubtext" class="text-sm pt-2 opacity-80">tekan <kbd class="px-2 py-0.5 rounded-md
               bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
               shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)]">Enter</kbd> untuk mencari</p>
         </div>
@@ -108,7 +108,7 @@
         <aside id="settingsPanel"
             class="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200">
             <div
-                class="settings-content w-full max-w-md p-6 bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                class="settings-content w-full max-w-2xl p-6 bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
                shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] rounded-xl text-left">
                 <h2 class="font-semibold mb-3">Pengaturan</h2>
                 <div class="flex items-center gap-3 mb-3">
@@ -126,16 +126,16 @@
                      shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Default</button>
                         <button data-preset="./bg/bg01.webp"
                             class="p-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
-                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Preset 1</button>
+                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Wallpaper 1</button>
                         <button data-preset="./bg/bg02.webp"
                             class="p-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
-                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Preset 2</button>
+                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Wallpaper 2</button>
                         <button data-preset="./bg/bg04.webp"
                             class="p-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
-                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Preset 3</button>
+                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Wallpaper 3</button>
                         <button data-preset="https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?q=80&w=1400&auto=format&fit=crop&s=1"
                             class="p-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
-                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Preset 4</button>
+                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Wallpaper 4</button>
                     </div>
                     <div class="mt-3 flex gap-2 items-center">
                         <input id="uploadBg" type="file" accept="image/*" class="text-sm hidden" />
@@ -145,6 +145,56 @@
                         <button id="removeBg"
                             class="p-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
                      shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Remove</button>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="text-sm">Mascot</label>
+                    <div class="flex flex-wrap gap-2 mt-2 items-center">
+                        <button data-mascot="./icon/maskot.webp" class="mascot-preset p-0 rounded-full bg-[rgba(255,255,255,0.02)]" title="Default">
+                            <img src="./icon/maskot.webp" class="w-12 h-12 rounded-full object-cover" alt="Default">
+                        </button>
+                        <button data-mascot="./icon/maskot2.webp" class="mascot-preset p-0 rounded-full bg-[rgba(255,255,255,0.02)]" title="Variant 1">
+                            <img src="./icon/maskot2.webp" class="w-12 h-12 rounded-full object-cover" alt="Variant 1">
+                        </button>
+                        <button data-mascot="./icon/maskot3.webp" class="mascot-preset p-0 rounded-full bg-[rgba(255,255,255,0.02)]" title="Variant 2">
+                            <img src="./icon/maskot3.webp" class="w-12 h-12 rounded-full object-cover" alt="Variant 2">
+                        </button>
+                        <button data-mascot="./icon/maskot4.webp" class="mascot-preset p-0 rounded-full bg-[rgba(255,255,255,0.02)]" title="Variant 2">
+                            <img src="./icon/maskot4.webp" class="w-12 h-12 rounded-full object-cover" alt="Variant 2">
+                        </button>
+                    </div>
+                    <div class="mt-3 flex gap-2 items-center">
+                        <input id="uploadMascot" type="file" accept="image/*" class="text-sm hidden" />
+                        <label for="uploadMascot" id="uploadMascotLabel"
+                            class="inline-flex items-center gap-2 bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm p-2 rounded-full cursor-pointer hover:bg-white/10">📁 Upload mascots</label>
+                        <button id="removeMascot"
+                            class="p-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Remove</button>
+                        <div id="mascotPreviewSmall" class="ml-2 w-10 h-10 rounded-full overflow-hidden border border-[rgba(255,255,255,0.06)]"></div>
+                    </div>
+                    <div class="mt-2 flex items-center gap-2">
+                        <input id="showMascotToggle" type="checkbox" class="hidden" />
+                        <label for="showMascotToggle" class="inline-flex items-center gap-2 cursor-pointer select-none">
+                            <input id="showMascotCheckboxVisual" type="checkbox" />
+                            <span class="text-sm">Tampilkan maskot</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="text-sm">Header</label>
+                    <div class="mt-2 flex flex-col gap-2">
+                        <input id="headerTitleInput" type="text" class="p-2 rounded-full bg-[rgba(255,255,255,0.04)] text-sm" placeholder="Judul (H1)" />
+                        <label class="inline-flex items-center gap-2">
+                            <input id="showHeaderTitleToggle" type="checkbox" />
+                            <span class="text-sm">Tampilkan judul</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2">
+                            <input id="showHeaderSubtextToggle" type="checkbox" />
+                            <span class="text-sm">Tampilkan subteks</span>
+                        </label>
                     </div>
                 </div>
 
@@ -211,14 +261,19 @@
         © <a href="http://jkp.my.id" target="_blank" rel="noopener noreferrer">JKP</a> • <span id="year"></span> • local settings
     </footer>
 
-    <!-- debug overlay removed -->
 
     <script>
         const STORAGE_KEY = 'startpage-settings-v1';
         const defaultSettings = {
             theme: 'dark',
             engine: 'https://www.google.com/search?q=',
-            wallpaper: null
+            wallpaper: null,
+            mascot: null,
+            mascotSource: 'preset',
+            showMascot: true,
+            headerTitle: 'Halo, Kakak ✨',
+            showHeaderTitle: true,
+            showHeaderSubtext: true
         };
 
         function supportsLocalStorage() {
@@ -236,6 +291,23 @@
             } catch (e) {}
         }
 
+        // make saveSettings failures visible in console to diagnose issues (e.g., quota)
+        const _saveSettings = saveSettings;
+        saveSettings = function(obj) {
+            try {
+                _saveSettings(obj);
+            } catch (e) {
+                console.warn('[settings] saveSettings failed', e);
+            }
+            // also log a compact preview for debugging
+            try {
+                console.debug('[settings] saved preview ->', { mascot: (obj && obj.mascot) ? (typeof obj.mascot === 'string' ? (obj.mascot.slice(0, 64) + (obj.mascot.length > 64 ? '...':'') ) : obj.mascot) : null });
+            } catch (e) {}
+        };
+
+    // separate mascot key (more robust small-key save)
+    const MASCOT_KEY = 'startpage-mascot-v1';
+
         function loadSettings() {
             try {
                 if (supportsLocalStorage()) {
@@ -250,8 +322,15 @@
                     }
                 }
             } catch (e) {
-                return {
-                    ...defaultSettings
+                // fallback: try reading mascot only and merge
+                try {
+                    const mRaw = supportsLocalStorage() ? localStorage.getItem(MASCOT_KEY) : null;
+                    const mObj = mRaw ? JSON.parse(mRaw) : null;
+                    const base = { ...defaultSettings };
+                    if (mObj && mObj.src) base.mascot = mObj.src;
+                    return base;
+                } catch (e2) {
+                    return { ...defaultSettings };
                 }
             }
         }
@@ -275,11 +354,42 @@
         const engineDropdownTrigger = document.getElementById('engineDropdownTrigger');
         const engineDropdownMenu = document.getElementById('engineDropdownMenu');
         const selectedEngineIcon = document.getElementById('selectedEngineIcon');
+    const mascotImg = document.getElementById('mascotImg');
+    const mascotBadge = document.getElementById('mascotBadge');
+    const mascotPreviewSmall = document.getElementById('mascotPreviewSmall');
+    const uploadMascot = document.getElementById('uploadMascot');
+    const removeMascot = document.getElementById('removeMascot');
+        const mascotWrap = document.getElementById('mascotWrap');
+        const showMascotToggle = document.getElementById('showMascotToggle');
+        const showMascotCheckboxVisual = document.getElementById('showMascotCheckboxVisual');
+    const headerTitleEl = document.getElementById('headerTitle');
+    const headerSubtextEl = document.getElementById('headerSubtext');
+    const headerTitleInput = document.getElementById('headerTitleInput');
+    const showHeaderTitleToggle = document.getElementById('showHeaderTitleToggle');
+    const showHeaderSubtextToggle = document.getElementById('showHeaderSubtextToggle');
 
         // New elements for the settings radio buttons
         const defaultEngineButtons = document.getElementById('defaultEngineButtons').querySelectorAll('.engineBtn');
 
         let settings = loadSettings();
+    console.debug('[settings] loaded ->', { mascot: settings && settings.mascot ? (typeof settings.mascot === 'string' ? (settings.mascot.slice(0,64) + (settings.mascot.length>64?'...':'')) : settings.mascot) : null });
+        // if mascot missing, try to restore from MASCOT_KEY
+        if (!settings.mascot) {
+            try {
+                const mRaw = supportsLocalStorage() ? localStorage.getItem(MASCOT_KEY) : null;
+                if (mRaw) {
+                    const mObj = JSON.parse(mRaw);
+                    if (mObj && mObj.src) {
+                        console.debug('[mascot] restoring from', MASCOT_KEY, mObj.src && (typeof mObj.src === 'string' ? mObj.src.slice(0,64) + (mObj.src.length>64?'...':'') : mObj.src));
+                        settings.mascot = mObj.src;
+                        settings.mascotSource = mObj.source || 'preset';
+                        // do not save yet; applySettings will save when applyMascot is called
+                    }
+                }
+            } catch (e) {
+                console.warn('[mascot] restore from MASCOT_KEY failed', e);
+            }
+        }
 
         // suggestions filtering: terms to block from appearing in Google Suggest
         const SUGGEST_BANNED = [
@@ -410,6 +520,12 @@
         function applySettings(s) {
             applyTheme(s.theme);
             applyWallpaper(s.wallpaper);
+            // apply header text & visibility
+            applyHeaderSettings(s);
+            // show/hide mascot
+            applyShowMascot(s.showMascot === undefined ? true : s.showMascot);
+            // apply mascot if present
+            if (s.mascot) applyMascot(s.mascot, s.mascotSource || 'preset');
             // when using dropdown, set selected value and custom input
             const known = ['https://www.google.com/search?q=', 'https://duckduckgo.com/?q=', 'https://www.bing.com/search?q=', 'https://search.brave.com/search?q='];
             const matched = known.includes(s.engine) ? s.engine : 'custom';
@@ -444,6 +560,104 @@
         }
 
         applySettings(settings);
+
+        function applyMascot(src, source) {
+            try {
+                if (mascotImg) mascotImg.src = src || './icon/maskot.webp';
+                // small preview (if present)
+                if (typeof mascotPreviewSmall !== 'undefined' && mascotPreviewSmall && mascotPreviewSmall.nodeType === 1) {
+                    try {
+                        mascotPreviewSmall.innerHTML = '';
+                        const im = document.createElement('img');
+                        im.src = src || './icon/maskot.webp';
+                        im.className = 'w-full h-full object-cover';
+                        mascotPreviewSmall.appendChild(im);
+                    } catch (e) {
+                        console.warn('[mascot] preview update failed', e);
+                    }
+                }
+                // badge (preset or custom) if available
+                if (typeof mascotBadge !== 'undefined' && mascotBadge && mascotBadge.nodeType === 1) {
+                    mascotBadge.textContent = source === 'custom' ? 'custom' : 'preset';
+                }
+                settings.mascot = src;
+                settings.mascotSource = source;
+                try { saveSettings(settings); console.debug('[mascot] saved to settings'); } catch (e) { console.warn('[mascot] save to settings failed', e); }
+                // also save a small copy under a dedicated key to make persistence more robust
+                try {
+                    if (supportsLocalStorage()) localStorage.setItem(MASCOT_KEY, JSON.stringify({ src: src, source: source }));
+                    console.debug('[mascot] saved to', MASCOT_KEY);
+                } catch (e) { console.warn('[mascot] failed saving to MASCOT_KEY', e); }
+                // update preset active state
+                markActivePreset(src, source);
+            } catch (e) {
+                console.warn('applyMascot failed', e);
+            }
+        }
+
+            function applyShowMascot(show) {
+                try {
+                    const shouldShow = !!show;
+                    if (mascotWrap) mascotWrap.style.display = shouldShow ? '' : 'none';
+                    // keep the visual checkbox in sync
+                    if (typeof showMascotCheckboxVisual !== 'undefined' && showMascotCheckboxVisual) showMascotCheckboxVisual.checked = shouldShow;
+                    settings.showMascot = shouldShow;
+                    saveSettings(settings);
+                    console.debug('[settings] applyShowMascot ->', shouldShow);
+                } catch (e) {
+                    console.warn('applyShowMascot failed', e);
+                }
+            }
+
+        function markActivePreset(src, source) {
+            const presets = document.querySelectorAll('.mascot-preset');
+            presets.forEach(p => {
+                const psrc = p.getAttribute('data-mascot');
+                if (source === 'custom') {
+                    p.style.outline = '';
+                } else {
+                    if (psrc === src) {
+                        p.style.outline = '3px solid rgba(34,211,238,0.36)';
+                        p.style.outlineOffset = '3px';
+                    } else {
+                        p.style.outline = '';
+                    }
+                }
+            });
+        }
+
+        function applyHeaderSettings(s) {
+            try {
+                // prefer explicit headerTitle value (even empty string). Only use default when undefined.
+                const title = (s && Object.prototype.hasOwnProperty.call(s, 'headerTitle')) ? s.headerTitle : defaultSettings.headerTitle;
+                let showTitle = typeof s.showHeaderTitle === 'undefined' ? true : !!s.showHeaderTitle;
+                // if the title is intentionally empty, hide the header automatically
+                if (!title || !String(title).trim()) {
+                    showTitle = false;
+                }
+                const showSub = typeof s.showHeaderSubtext === 'undefined' ? true : !!s.showHeaderSubtext;
+
+                if (headerTitleEl) {
+                    headerTitleEl.textContent = title;
+                    headerTitleEl.style.display = showTitle ? '' : 'none';
+                }
+                if (headerSubtextEl) headerSubtextEl.style.display = showSub ? '' : 'none';
+
+                // keep controls in settings panel in sync
+                if (headerTitleInput) headerTitleInput.value = title;
+                if (showHeaderTitleToggle) showHeaderTitleToggle.checked = showTitle;
+                if (showHeaderSubtextToggle) showHeaderSubtextToggle.checked = showSub;
+
+                // persist into settings object if provided
+                settings.headerTitle = title;
+                settings.showHeaderTitle = showTitle;
+                settings.showHeaderSubtext = showSub;
+                saveSettings(settings);
+                console.debug('[settings] applyHeaderSettings ->', { title, showTitle, showSub });
+            } catch (e) {
+                console.warn('applyHeaderSettings failed', e);
+            }
+        }
 
         // Settings panel toggle (use Tailwind classes for visibility)
         settingsBtn.addEventListener('click', () => {
@@ -561,6 +775,84 @@
             applyWallpaper(null)
             saveSettings(settings);
         });
+
+        // mascot presets wiring
+        const mascotPresets = document.querySelectorAll('.mascot-preset');
+        if (mascotPresets && mascotPresets.length) {
+            mascotPresets.forEach(b => {
+                b.addEventListener('click', () => {
+                    const src = b.getAttribute('data-mascot');
+                    applyMascot(src, 'preset');
+                });
+            });
+        }
+
+        if (typeof uploadMascot !== 'undefined' && uploadMascot && uploadMascot.addEventListener) {
+            uploadMascot.addEventListener('change', e => {
+                const f = e.target.files && e.target.files[0];
+                if (!f) return;
+                if (f.size > 2_000_000) {
+                    if (!confirm('Gambar maskot >2MB, lanjut?')) return;
+                }
+                const reader = new FileReader();
+                reader.onload = () => {
+                    applyMascot(reader.result, 'custom');
+                };
+                reader.readAsDataURL(f);
+            });
+        }
+
+        if (typeof removeMascot !== 'undefined' && removeMascot && removeMascot.addEventListener) {
+            removeMascot.addEventListener('click', () => {
+                if (!confirm('Remove custom mascot and revert to default?')) return;
+                settings.mascot = null;
+                settings.mascotSource = 'preset';
+                applyMascot('./icon/maskot.webp', 'preset');
+                saveSettings(settings);
+            });
+        }
+
+        // show/hide mascot toggle (visual checkbox)
+        if (typeof showMascotCheckboxVisual !== 'undefined' && showMascotCheckboxVisual) {
+            // initialize visual checkbox state
+            showMascotCheckboxVisual.checked = settings.showMascot === undefined ? true : !!settings.showMascot;
+            showMascotCheckboxVisual.addEventListener('change', (e) => {
+                applyShowMascot(!!e.target.checked);
+            });
+        }
+
+        // Header controls wiring
+        if (headerTitleInput) {
+            headerTitleInput.value = (typeof settings.headerTitle === 'undefined' || settings.headerTitle === null) ? defaultSettings.headerTitle : settings.headerTitle;
+            headerTitleInput.addEventListener('input', (e) => {
+                const v = e.target.value;
+                settings.headerTitle = v;
+                // if user cleared the input, auto-uncheck the show title toggle
+                if (!v || !v.trim()) {
+                    settings.showHeaderTitle = false;
+                }
+                applyHeaderSettings(settings);
+            });
+        }
+        if (showHeaderTitleToggle) {
+            showHeaderTitleToggle.checked = settings.showHeaderTitle === undefined ? true : !!settings.showHeaderTitle;
+            showHeaderTitleToggle.addEventListener('change', (e) => {
+                const checked = !!e.target.checked;
+                // if re-checking while title is empty, restore default title
+                if (checked && (!settings.headerTitle || !String(settings.headerTitle).trim())) {
+                    settings.headerTitle = defaultSettings.headerTitle;
+                }
+                settings.showHeaderTitle = checked;
+                applyHeaderSettings(settings);
+            });
+        }
+        if (showHeaderSubtextToggle) {
+            showHeaderSubtextToggle.checked = settings.showHeaderSubtext === undefined ? true : !!settings.showHeaderSubtext;
+            showHeaderSubtextToggle.addEventListener('change', (e) => {
+                settings.showHeaderSubtext = !!e.target.checked;
+                applyHeaderSettings(settings);
+            });
+        }
 
         // Save button removed: settings are saved automatically when changed
         // Use submitSearch so queries are saved to history first
@@ -904,6 +1196,16 @@
         });
         window.addEventListener('load', () => {
             queryInput.focus()
+        });
+
+        // Ensure we persist the latest settings before the page unloads — helps when localStorage is quota-sensitive
+        window.addEventListener('beforeunload', () => {
+            try {
+                saveSettings(settings);
+                console.debug('[settings] beforeunload saved settings');
+            } catch (e) {
+                console.warn('[settings] beforeunload save failed', e);
+            }
         });
         window.addEventListener('keydown', e => {
             // focus search with Ctrl/Cmd+K
