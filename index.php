@@ -4,10 +4,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Start Page — Minimal</title>
+    <title>JKP Search Page</title>
+    <meta name="description" content="Kunjugi halaman search yang lebih meanarik" />
     <link rel="icon" type="image/png/ico" href="https://jkp.my.id/assets//img//icons/favico.ico">
-    <!-- Tailwind Play CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Play CLI -->
+    <link href="./style.css" rel="stylesheet">
     <style>
         body {
             transition: background-image .35s ease, background-color .35s ease, color .2s ease;
@@ -91,20 +92,21 @@
         /* engine icon buttons */
         .engineBtn {
             width: 44px;
-            height: 54px;
+            height: 44px;
             display: inline-flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: .25rem;
-            border-radius: 10rem;
-            /* fully rounded */
+            border-radius: 1rem;
             border: 1px solid rgba(255, 255, 255, 0.06);
             background: rgba(255, 255, 255, 0.02);
             cursor: pointer;
+            transition: transform .15s ease, background .15s ease, border-color .15s ease;
         }
 
         .engineBtn:hover {
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.06);
         }
 
         .engineBtn.active {
@@ -166,10 +168,6 @@
             justify-content: center;
             padding: .5rem;
             border-radius: 9999px;
-            background-color: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.25);
             cursor: pointer;
         }
 
@@ -191,10 +189,6 @@
             width: 12rem;
             padding: 8px;
             border-radius: 12px;
-            background-color: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
             z-index: 50;
         }
 
@@ -291,6 +285,41 @@
         .suggestion-item.active {
             background: rgba(255, 255, 255, 0.04);
         }
+
+        /* CLS FIX: Settings panel as a fixed overlay */
+        #settingsPanel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(2, 6, 23, 0.5);
+            /* Semi-transparent overlay background */
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        #settingsPanel.is-visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #settingsPanel .settings-content {
+            width: 100%;
+            max-width: 28rem;
+            padding: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.25);
+        }
     </style>
 </head>
 
@@ -310,10 +339,10 @@
         <form id="searchForm" class="flex gap-3 items-center justify-center mb-6">
             <!-- Container untuk dropdown kustom -->
             <div class="custom-dropdown-container relative">
-                <div id="engineDropdownTrigger" class="custom-dropdown-trigger" title="Pilih mesin pencari">
+                <div id="engineDropdownTrigger" class="custom-dropdown-trigger glass" title="Pilih mesin pencari">
                     <img id="selectedEngineIcon" src="./icon/google.svg" alt="Google">
                 </div>
-                <ul id="engineDropdownMenu" class="custom-dropdown-menu hidden">
+                <ul id="engineDropdownMenu" class="custom-dropdown-menu glass hidden">
                     <li data-value="https://www.google.com/search?q=" data-icon="./icon/google.svg">
                         <img src="./icon/google.svg" alt="Google" class="inline-block w-6 h-6 mr-2" /> Google
                     </li>
@@ -357,72 +386,72 @@
             </div>
         </form>
 
-        <!-- Settings panel -->
-        <aside id="settingsPanel" class="mt-6 p-4 rounded-xl glass shadow-lg" style="display:none; text-align:left;">
-            <h2 class="font-semibold mb-3">Pengaturan</h2>
-            <div class="flex items-center gap-3 mb-3">
-                <label class="flex-1 text-sm hidden">Tema</label>
-                <div class="flex gap-2 items-center">
-                    <button id="toggleTheme" class="px-3 py-1 rounded glass">Toggle</button>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="text-sm">Wallpaper</label>
-                <div class="flex gap-2 mt-2">
-                    <button data-preset="none" class="presetBtn p-2 rounded-full glass text-sm">Default</button>
-                    <button data-preset="./bg/bg01.webp" class="presetBtn p-2 rounded-full glass text-sm">Preset 1</button>
-                    <button data-preset="./bg/bg02.webp" class="presetBtn p-2 rounded-full glass text-sm">Preset 2</button>
-                    <button data-preset="./bg/bg04.webp" class="presetBtn p-2 rounded-full glass text-sm">Preset 3</button>
-                    <button data-preset="https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?q=80&w=1400&auto=format&fit=crop&s=1" class="presetBtn p-2 rounded-full glass text-sm">Preset 4</button>
-                </div>
-                <div class="mt-3 flex gap-2 items-center">
-                    <input id="uploadBg" type="file" accept="image/*" class="text-sm" />
-                    <label for="uploadBg" class="file-label glass text-sm p-2 rounded-full">📁 Pilih gambar...</label>
-                    <button id="removeBg" class="p-2 rounded-full glass text-sm">Remove</button>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="text-sm">Default Search Engine</label>
-                <div class="mt-2 text-sm custom-dropdown-container">
-                    <!-- Dropdown kustom baru untuk pengaturan -->
-                    <div id="defaultEngineTrigger" class="custom-dropdown-trigger p-2 w-full flex items-center justify-between text-base" style="width: 100%; height: auto; border-radius: 9999px;">
-                        <span id="defaultEngineText">Google</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 opacity-70">
-                            <path d="M6 9l6 6 6-6" />
-                        </svg>
+        <!-- Settings panel as a fixed overlay to prevent CLS -->
+        <aside id="settingsPanel">
+            <div class="settings-content text-left">
+                <h2 class="font-semibold mb-3">Pengaturan</h2>
+                <div class="flex items-center gap-3 mb-3">
+                    <label class="flex-1 text-sm hidden">Tema</label>
+                    <div class="flex gap-2 items-center">
+                        <button id="toggleTheme" class="px-3 py-1 rounded glass">Toggle</button>
                     </div>
-                    <ul id="defaultEngineMenu" class="custom-dropdown-menu hidden" style="width: 100%;">
-                        <li data-value="https://www.google.com/search?q=">Google</li>
-                        <li data-value="https://duckduckgo.com/?q=">DuckDuckGo</li>
-                        <li data-value="https://www.bing.com/search?q=">Bing</li>
-                        <li data-value="custom">Custom...</li>
-                    </ul>
-                    <!-- <select> asli disembunyikan untuk fungsionalitas -->
-                    <select id="defaultEngine" class="hidden">
-                        <option value="https://www.google.com/search?q=">Google</option>
-                        <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
-                        <option value="https://www.bing.com/search?q=">Bing</option>
-                        <option value="custom">Custom...</option>
-                    </select>
+                </div>
 
+                <div class="mb-3">
+                    <label class="text-sm">Wallpaper</label>
+                    <div class="flex gap-2 mt-2">
+                        <button data-preset="none" class="presetBtn p-2 rounded-full glass text-sm">Default</button>
+                        <button data-preset="./bg/bg01.webp" class="presetBtn p-2 rounded-full glass text-sm">Preset 1</button>
+                        <button data-preset="./bg/bg02.webp" class="presetBtn p-2 rounded-full glass text-sm">Preset 2</button>
+                        <button data-preset="./bg/bg04.webp" class="presetBtn p-2 rounded-full glass text-sm">Preset 3</button>
+                        <button data-preset="https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?q=80&w=1400&auto=format&fit=crop&s=1" class="presetBtn p-2 rounded-full glass text-sm">Preset 4</button>
+                    </div>
+                    <div class="mt-3 flex gap-2 items-center">
+                        <input id="uploadBg" type="file" accept="image/*" class="text-sm" />
+                        <label for="uploadBg" class="file-label glass text-sm p-2 rounded-full">📁 Pilih gambar...</label>
+                        <button id="removeBg" class="p-2 rounded-full glass text-sm">Remove</button>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="text-sm">Default Search Engine</label>
+                    <div id="defaultEngineButtons" class="flex flex-wrap gap-2 mt-2">
+                        <button class="engineBtn" data-value="https://www.google.com/search?q=">
+                            <img src="./icon/google.svg" class="engine-icon" alt="Google">
+                        </button>
+                        <button class="engineBtn" data-value="https://duckduckgo.com/?q=">
+                            <img src="./icon/duckduckgo.svg" class="engine-icon" alt="DuckDuckGo">
+                        </button>
+                        <button class="engineBtn" data-value="https://www.bing.com/search?q=">
+                            <img src="./icon/bing.svg" class="engine-icon" alt="Bing">
+                        </button>
+                        <button class="engineBtn" data-value="https://search.brave.com/search?q=">
+                            <img src="./icon/brave.svg" class="engine-icon" alt="Brave">
+                        </button>
+                        <button class="engineBtn" data-value="custom">
+                            <svg class="engine-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 20v-8m0 0V4m0 8h8m-8 0H4" />
+                            </svg>
+                        </button>
+                    </div>
                     <input id="defaultEngineCustom" placeholder="Custom engine base URL" class="mt-2 p-2 rounded-full glass w-full" style="display:none;" />
                 </div>
-            </div>
 
-            <div class="flex gap-2 mt-4">
-                <button id="saveSettings" class="px-4 py-2 rounded-full glass">Save</button>
-                <button id="cancelSettings" class="px-4 py-2 rounded-full glass">Close</button>
-                <button id="resetBtn" class="px-4 py-2 rounded-full glass text-red-500">Reset</button>
+                <div class="flex gap-2 mt-4">
+                    <button id="saveSettings" class="px-4 py-2 rounded-full glass">Save</button>
+                    <button id="cancelSettings" class="px-4 py-2 rounded-full glass">Close</button>
+                    <button id="resetBtn" class="px-4 py-2 rounded-full glass text-red-500">Reset</button>
+                </div>
             </div>
         </aside>
-
-        <footer class="mt-8 text-xs ">JKP • <span id="year"></span> • local settings</footer>
     </main>
 
     <!-- Floating settings button -->
     <button id="settingsBtn" class="fixed bottom-4 right-4 p-3 glass shadow-lg">⚙️</button>
+
+    <footer class="mt-8 text-xs opacity-70 text-center w-full pb-4">
+        © <a href="http://jkp.my.id" target="_blank" rel="noopener noreferrer">JKP</a> • <span id="year"></span> • local settings
+    </footer>
 
     <script>
         const STORAGE_KEY = 'startpage-settings-v1';
@@ -476,7 +505,6 @@
         const toggleThemeBtn = document.getElementById('toggleTheme');
         const engineSelect = document.getElementById('engineSelect');
         const customEngineInput = document.getElementById('customEngineInput');
-        const defaultEngineSelect = document.getElementById('defaultEngine');
         const defaultEngineCustom = document.getElementById('defaultEngineCustom');
         const presetBtns = document.querySelectorAll('.presetBtn');
         const uploadBg = document.getElementById('uploadBg');
@@ -490,11 +518,8 @@
         const selectedEngineIcon = document.getElementById('selectedEngineIcon');
         const engineMenuItems = engineDropdownMenu.querySelectorAll('li');
 
-        // New elements for the settings dropdown
-        const defaultEngineTrigger = document.getElementById('defaultEngineTrigger');
-        const defaultEngineMenu = document.getElementById('defaultEngineMenu');
-        const defaultEngineText = document.getElementById('defaultEngineText');
-        const defaultEngineMenuItems = defaultEngineMenu.querySelectorAll('li');
+        // New elements for the settings radio buttons
+        const defaultEngineButtons = document.getElementById('defaultEngineButtons').querySelectorAll('.engineBtn');
 
         let settings = loadSettings();
 
@@ -508,7 +533,11 @@
             'judi',
             'togel',
             'rtp',
-            'judi'
+            'judi',
+            'qq',
+            'judol',
+            '88',
+            '77'
             // add more terms here as needed
         ];
 
@@ -539,33 +568,35 @@
                 customEngineInput.value = s.engine
             } else customEngineInput.style.display = 'none';
 
-            // Update settings dropdown based on saved engine
-            const defaultMatched = ['https://www.google.com/search?q=', 'https://duckduckgo.com/?q=', 'https://www.bing.com/search?q='].includes(s.engine) ? s.engine : 'custom';
-            defaultEngineSelect.value = defaultMatched;
-            const selectedText = defaultEngineMenu.querySelector(`[data-value="${defaultMatched}"]`)?.textContent.trim() || "Custom...";
-            defaultEngineText.textContent = selectedText;
-            if (defaultMatched === 'custom') {
-                defaultEngineCustom.style.display = 'block';
-                defaultEngineCustom.value = s.engine
-            } else defaultEngineCustom.style.display = 'none';
+            // Update settings radio buttons
+            defaultEngineButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.value === s.engine || (btn.dataset.value === 'custom' && !known.includes(s.engine))) {
+                    btn.classList.add('active');
+                    defaultEngineCustom.style.display = (btn.dataset.value === 'custom') ? 'block' : 'none';
+                    if (btn.dataset.value === 'custom') {
+                        defaultEngineCustom.value = s.engine;
+                    }
+                }
+            });
 
             // Also update the main dropdown's icon
             const mainEngineItem = engineDropdownMenu.querySelector(`[data-value="${s.engine}"]`);
             if (mainEngineItem) {
                 selectedEngineIcon.src = mainEngineItem.getAttribute('data-icon');
             } else {
-                // If it's a custom URL, default to Google icon
-                selectedEngineIcon.src = "./icon/google.svg";
+                // If it's a custom URL, default to Brave icon (or a better icon)
+                selectedEngineIcon.src = "./icon/brave.svg";
             }
         }
 
         applySettings(settings);
 
         settingsBtn.addEventListener('click', () => {
-            settingsPanel.style.display = settingsPanel.style.display === 'none' ? 'block' : 'none'
+            settingsPanel.classList.toggle('is-visible');
         });
         cancelSettingsBtn.addEventListener('click', () => {
-            settingsPanel.style.display = 'none'
+            settingsPanel.classList.remove('is-visible');
         });
         resetBtn.addEventListener('click', () => {
             // Use a custom modal instead of alert/confirm
@@ -586,14 +617,12 @@
             saveSettings(settings);
         });
 
-        // Event listener untuk dropdown kustom utama
+        // Event listener for main dropdown
         engineDropdownTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
             engineDropdownMenu.classList.toggle('hidden');
-            defaultEngineMenu.classList.add('hidden'); // Close other dropdown
         });
 
-        // Event listener untuk item di dropdown kustom utama
         engineMenuItems.forEach(item => {
             item.addEventListener('click', () => {
                 const value = item.getAttribute('data-value');
@@ -604,22 +633,14 @@
             });
         });
 
-        // Event listener untuk dropdown kustom pengaturan
-        defaultEngineTrigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            defaultEngineMenu.classList.toggle('hidden');
-            engineDropdownMenu.classList.add('hidden'); // Close other dropdown
-        });
-
-        // Event listener untuk item di dropdown pengaturan
-        defaultEngineMenuItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const value = item.getAttribute('data-value');
-                const text = item.textContent.trim();
-                defaultEngineText.textContent = text;
-                defaultEngineSelect.value = value;
-                defaultEngineMenu.classList.add('hidden');
-                defaultEngineCustom.style.display = value === 'custom' ? 'block' : 'none';
+        // Event listener for settings radio buttons
+        defaultEngineButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                defaultEngineButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const value = btn.dataset.value;
+                defaultEngineCustom.style.display = (value === 'custom') ? 'block' : 'none';
+                settings.engine = (value === 'custom') ? defaultEngineCustom.value : value;
             });
         });
 
@@ -627,9 +648,6 @@
         document.addEventListener('click', (event) => {
             if (!engineDropdownTrigger.contains(event.target) && !engineDropdownMenu.contains(event.target)) {
                 engineDropdownMenu.classList.add('hidden');
-            }
-            if (!defaultEngineTrigger.contains(event.target) && !defaultEngineMenu.contains(event.target)) {
-                defaultEngineMenu.classList.add('hidden');
             }
         });
 
@@ -661,20 +679,22 @@
             saveSettings(settings);
         });
         saveSettingsBtn.addEventListener('click', () => {
-            let chosen = engineSelect.value;
-            let defaultChosen = defaultEngineSelect.value === 'custom' ? (defaultEngineCustom.value || chosen) : defaultEngineSelect.value;
-            settings.engine = defaultChosen;
+            const activeBtn = document.querySelector('#defaultEngineButtons .engineBtn.active');
+            if (activeBtn) {
+                const value = activeBtn.dataset.value;
+                settings.engine = (value === 'custom') ? defaultEngineCustom.value : value;
+            }
             saveSettings(settings);
             applySettings(settings);
-            settingsPanel.style.display = 'none';
+            settingsPanel.classList.remove('is-visible');
             alert('Pengaturan tersimpan.')
         });
         searchForm.addEventListener('submit', e => {
             e.preventDefault();
             const q = queryInput.value.trim();
             if (!q) return;
-            const base = engineSelect.value; // Now using the hidden select's value
-            const url = base + encodeURIComponent(q);
+            // The search engine URL is now stored in settings.engine
+            const url = settings.engine + encodeURIComponent(q);
             window.location.href = url
         });
         // clear button behaviour
@@ -784,8 +804,7 @@
         function submitSearch() {
             const q = queryInput.value.trim();
             if (!q) return;
-            const base = engineSelect.value;
-            const url = base + encodeURIComponent(q);
+            const url = settings.engine + encodeURIComponent(q);
             window.location.href = url;
         }
 
@@ -829,16 +848,16 @@
             if (!['INPUT', 'TEXTAREA', 'SELECT'].includes(activeTag)) {
                 if ((e.ctrlKey || e.metaKey) && e.key === ',') {
                     e.preventDefault();
-                    settingsPanel.style.display = settingsPanel.style.display === 'none' ? 'block' : 'none';
+                    settingsPanel.classList.toggle('is-visible');
                 } else if (e.key.toLowerCase() === 's') {
                     e.preventDefault();
-                    settingsPanel.style.display = settingsPanel.style.display === 'none' ? 'block' : 'none';
+                    settingsPanel.classList.toggle('is-visible');
                 }
             }
 
             // close settings with Escape
             if (e.key === 'Escape') {
-                if (settingsPanel.style.display !== 'none') settingsPanel.style.display = 'none';
+                if (settingsPanel.classList.contains('is-visible')) settingsPanel.classList.remove('is-visible');
             }
         });
 
