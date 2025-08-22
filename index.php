@@ -12,9 +12,9 @@
 </head>
 
 <body class="min-h-screen flex flex-col items-center justify-start pt-20 transition-all duration-300" data-theme="dark">
-    <main class="w-full max-w-2xl p-6 text-center">
+    <main class="w-full max-w-2xl p-6 text-center flex-1">
         <div id="logo" class="mb-8">
-                <div class="logo-row flex items-end justify-center gap-3 mb-1">
+            <div class="logo-row flex items-end justify-center gap-3 mb-1">
                 <!-- mascot image provided by user (wrapped so it can be hidden) -->
                 <div id="mascotWrap" class="mascot relative rounded-full h-14 w-14 flex items-center justify-center overflow-hidden">
                     <img id="mascotImg" src="./icon/maskot.webp" alt="Maskot" class="w-full h-full object-cover" />
@@ -297,16 +297,12 @@
             try {
                 _saveSettings(obj);
             } catch (e) {
-                console.warn('[settings] saveSettings failed', e);
+                // silently ignore save errors
             }
-            // also log a compact preview for debugging
-            try {
-                console.debug('[settings] saved preview ->', { mascot: (obj && obj.mascot) ? (typeof obj.mascot === 'string' ? (obj.mascot.slice(0, 64) + (obj.mascot.length > 64 ? '...':'') ) : obj.mascot) : null });
-            } catch (e) {}
         };
 
-    // separate mascot key (more robust small-key save)
-    const MASCOT_KEY = 'startpage-mascot-v1';
+        // separate mascot key (more robust small-key save)
+        const MASCOT_KEY = 'startpage-mascot-v1';
 
         function loadSettings() {
             try {
@@ -326,11 +322,15 @@
                 try {
                     const mRaw = supportsLocalStorage() ? localStorage.getItem(MASCOT_KEY) : null;
                     const mObj = mRaw ? JSON.parse(mRaw) : null;
-                    const base = { ...defaultSettings };
+                    const base = {
+                        ...defaultSettings
+                    };
                     if (mObj && mObj.src) base.mascot = mObj.src;
                     return base;
                 } catch (e2) {
-                    return { ...defaultSettings };
+                    return {
+                        ...defaultSettings
+                    };
                 }
             }
         }
@@ -354,25 +354,25 @@
         const engineDropdownTrigger = document.getElementById('engineDropdownTrigger');
         const engineDropdownMenu = document.getElementById('engineDropdownMenu');
         const selectedEngineIcon = document.getElementById('selectedEngineIcon');
-    const mascotImg = document.getElementById('mascotImg');
-    const mascotBadge = document.getElementById('mascotBadge');
-    const mascotPreviewSmall = document.getElementById('mascotPreviewSmall');
-    const uploadMascot = document.getElementById('uploadMascot');
-    const removeMascot = document.getElementById('removeMascot');
+        const mascotImg = document.getElementById('mascotImg');
+        const mascotBadge = document.getElementById('mascotBadge');
+        const mascotPreviewSmall = document.getElementById('mascotPreviewSmall');
+        const uploadMascot = document.getElementById('uploadMascot');
+        const removeMascot = document.getElementById('removeMascot');
         const mascotWrap = document.getElementById('mascotWrap');
         const showMascotToggle = document.getElementById('showMascotToggle');
         const showMascotCheckboxVisual = document.getElementById('showMascotCheckboxVisual');
-    const headerTitleEl = document.getElementById('headerTitle');
-    const headerSubtextEl = document.getElementById('headerSubtext');
-    const headerTitleInput = document.getElementById('headerTitleInput');
-    const showHeaderTitleToggle = document.getElementById('showHeaderTitleToggle');
-    const showHeaderSubtextToggle = document.getElementById('showHeaderSubtextToggle');
+        const headerTitleEl = document.getElementById('headerTitle');
+        const headerSubtextEl = document.getElementById('headerSubtext');
+        const headerTitleInput = document.getElementById('headerTitleInput');
+        const showHeaderTitleToggle = document.getElementById('showHeaderTitleToggle');
+        const showHeaderSubtextToggle = document.getElementById('showHeaderSubtextToggle');
 
         // New elements for the settings radio buttons
         const defaultEngineButtons = document.getElementById('defaultEngineButtons').querySelectorAll('.engineBtn');
 
         let settings = loadSettings();
-    console.debug('[settings] loaded ->', { mascot: settings && settings.mascot ? (typeof settings.mascot === 'string' ? (settings.mascot.slice(0,64) + (settings.mascot.length>64?'...':'')) : settings.mascot) : null });
+
         // if mascot missing, try to restore from MASCOT_KEY
         if (!settings.mascot) {
             try {
@@ -380,14 +380,14 @@
                 if (mRaw) {
                     const mObj = JSON.parse(mRaw);
                     if (mObj && mObj.src) {
-                        console.debug('[mascot] restoring from', MASCOT_KEY, mObj.src && (typeof mObj.src === 'string' ? mObj.src.slice(0,64) + (mObj.src.length>64?'...':'') : mObj.src));
+
                         settings.mascot = mObj.src;
                         settings.mascotSource = mObj.source || 'preset';
                         // do not save yet; applySettings will save when applyMascot is called
                     }
                 }
             } catch (e) {
-                console.warn('[mascot] restore from MASCOT_KEY failed', e);
+
             }
         }
 
@@ -406,16 +406,16 @@
                 if (supportsLocalStorage()) {
                     const raw = localStorage.getItem(HISTORY_KEY);
                     const parsed = raw ? JSON.parse(raw) : [];
-                    console.debug('[history] loadHistory ->', parsed && parsed.length ? parsed.slice(0, 10) : parsed);
+
                     return parsed;
                 } else {
                     const match = document.cookie.match(new RegExp('(^| )' + HISTORY_KEY + '=([^;]+)'));
                     const parsed = match ? JSON.parse(decodeURIComponent(match[2])) : [];
-                    console.debug('[history] loadHistory (cookie) ->', parsed && parsed.length ? parsed.slice(0, 10) : parsed);
+
                     return parsed;
                 }
             } catch (e) {
-                console.warn('[history] loadHistory failed', e);
+
                 return [];
             }
         }
@@ -425,7 +425,7 @@
                 const dump = JSON.stringify(arr);
                 if (supportsLocalStorage()) localStorage.setItem(HISTORY_KEY, dump);
                 else document.cookie = HISTORY_KEY + '=' + encodeURIComponent(dump) + ';path=/;max-age=' + (60 * 60 * 24 * 365);
-                console.debug('[history] saveHistory -> length:', (arr || []).length, 'preview:', (arr || []).slice(0, 8));
+
             } catch (e) {}
         }
 
@@ -441,31 +441,31 @@
                 suggestHistory.unshift(q);
                 if (suggestHistory.length > HISTORY_LIMIT) suggestHistory.length = HISTORY_LIMIT;
                 saveHistory(suggestHistory);
-                console.debug('[history] addToHistory ->', q);
+
             } catch (e) {}
         }
 
         function removeHistoryItem(idx) {
             try {
                 if (typeof idx === 'number') {
-                    console.debug('[history] removeHistoryItem by index ->', idx, suggestHistory[idx]);
+
                     suggestHistory.splice(idx, 1);
                 } else {
                     const val = (idx || '').toString().trim();
-                    console.debug('[history] removeHistoryItem by value ->', val);
+
                     // remove case-insensitive and trimmed
                     suggestHistory = suggestHistory.filter(item => item.toString().trim().toLowerCase() !== val.toLowerCase());
                 }
                 saveHistory(suggestHistory);
             } catch (e) {
-                console.warn('[history] removeHistoryItem failed', e);
+
             }
         }
 
         function clearHistory() {
             suggestHistory = [];
             saveHistory(suggestHistory);
-            console.debug('[history] clearHistory -> cleared');
+
             hideSuggestions();
         }
 
@@ -498,6 +498,21 @@
                 body.style.backgroundRepeat = '';
                 body.style.backgroundAttachment = '';
             }
+        }
+
+        function markActiveWallpaper(preset) {
+            try {
+                const btns = document.querySelectorAll('[data-preset]');
+                btns.forEach(b => {
+                    if ((preset === null || preset === 'none') && b.getAttribute('data-preset') === 'none') {
+                        b.classList.add('ring-2', 'ring-cyan-400/40');
+                    } else if (b.getAttribute('data-preset') === preset) {
+                        b.classList.add('ring-2', 'ring-cyan-400/40');
+                    } else {
+                        b.classList.remove('ring-2', 'ring-cyan-400/40');
+                    }
+                });
+            } catch (e) {}
         }
 
         // helper to visually mark an engine button active (adds small check element + shadow)
@@ -557,6 +572,8 @@
                 // If it's a custom URL, default to Brave icon (or a better icon)
                 selectedEngineIcon.src = "./icon/brave.svg";
             }
+            // mark active wallpaper in presets UI (always run)
+            try { markActiveWallpaper(s.wallpaper); } catch (e) {}
         }
 
         applySettings(settings);
@@ -573,7 +590,7 @@
                         im.className = 'w-full h-full object-cover';
                         mascotPreviewSmall.appendChild(im);
                     } catch (e) {
-                        console.warn('[mascot] preview update failed', e);
+
                     }
                 }
                 // badge (preset or custom) if available
@@ -582,32 +599,42 @@
                 }
                 settings.mascot = src;
                 settings.mascotSource = source;
-                try { saveSettings(settings); console.debug('[mascot] saved to settings'); } catch (e) { console.warn('[mascot] save to settings failed', e); }
+                try {
+                    saveSettings(settings);
+
+                } catch (e) {
+
+                }
                 // also save a small copy under a dedicated key to make persistence more robust
                 try {
-                    if (supportsLocalStorage()) localStorage.setItem(MASCOT_KEY, JSON.stringify({ src: src, source: source }));
-                    console.debug('[mascot] saved to', MASCOT_KEY);
-                } catch (e) { console.warn('[mascot] failed saving to MASCOT_KEY', e); }
+                    if (supportsLocalStorage()) localStorage.setItem(MASCOT_KEY, JSON.stringify({
+                        src: src,
+                        source: source
+                    }));
+
+                } catch (e) {
+
+                }
                 // update preset active state
                 markActivePreset(src, source);
             } catch (e) {
-                console.warn('applyMascot failed', e);
+
             }
         }
 
-            function applyShowMascot(show) {
-                try {
-                    const shouldShow = !!show;
-                    if (mascotWrap) mascotWrap.style.display = shouldShow ? '' : 'none';
-                    // keep the visual checkbox in sync
-                    if (typeof showMascotCheckboxVisual !== 'undefined' && showMascotCheckboxVisual) showMascotCheckboxVisual.checked = shouldShow;
-                    settings.showMascot = shouldShow;
-                    saveSettings(settings);
-                    console.debug('[settings] applyShowMascot ->', shouldShow);
-                } catch (e) {
-                    console.warn('applyShowMascot failed', e);
-                }
+        function applyShowMascot(show) {
+            try {
+                const shouldShow = !!show;
+                if (mascotWrap) mascotWrap.style.display = shouldShow ? '' : 'none';
+                // keep the visual checkbox in sync
+                if (typeof showMascotCheckboxVisual !== 'undefined' && showMascotCheckboxVisual) showMascotCheckboxVisual.checked = shouldShow;
+                settings.showMascot = shouldShow;
+                saveSettings(settings);
+
+            } catch (e) {
+
             }
+        }
 
         function markActivePreset(src, source) {
             const presets = document.querySelectorAll('.mascot-preset');
@@ -653,9 +680,9 @@
                 settings.showHeaderTitle = showTitle;
                 settings.showHeaderSubtext = showSub;
                 saveSettings(settings);
-                console.debug('[settings] applyHeaderSettings ->', { title, showTitle, showSub });
+
             } catch (e) {
-                console.warn('applyHeaderSettings failed', e);
+
             }
         }
 
@@ -754,6 +781,9 @@
                 settings.wallpaper = url === 'none' ? null : url;
                 applyWallpaper(settings.wallpaper)
                 saveSettings(settings);
+                try {
+                    markActiveWallpaper(settings.wallpaper);
+                } catch (e) {}
             })
         });
         uploadBg.addEventListener('change', e => {
@@ -767,6 +797,9 @@
                 settings.wallpaper = reader.result;
                 applyWallpaper(settings.wallpaper)
                 saveSettings(settings);
+                try {
+                    markActiveWallpaper(settings.wallpaper);
+                } catch (e) {}
             };
             reader.readAsDataURL(f)
         });
@@ -774,6 +807,9 @@
             settings.wallpaper = null;
             applyWallpaper(null)
             saveSettings(settings);
+            try {
+                markActiveWallpaper(null);
+            } catch (e) {}
         });
 
         // mascot presets wiring
@@ -924,7 +960,7 @@
 
         function scheduleSuggest(q) {
             if (suggestTimer) clearTimeout(suggestTimer);
-            console.debug('[suggest] scheduleSuggest ->', q);
+
             if (!q) {
                 // if empty, show local history (if any) instead of hiding
                 if (suggestHistory && suggestHistory.length) {
@@ -947,10 +983,10 @@
                 currentScript = null;
             }
             const cbName = 'gSuggestCB_' + Date.now();
-            console.debug('[suggest] fetchSuggest ->', q, 'callback:', cbName);
+
             window[cbName] = function(data) {
                 try {
-                    console.debug('[suggest] JSONP cb', cbName, 'raw:', data && data[1] ? data[1].slice(0, 8) : data);
+
                     renderSuggestions(data && data[1] ? data[1] : []);
                 } finally {
                     delete window[cbName];
@@ -972,7 +1008,7 @@
         }
 
         function renderSuggestions(list) {
-            console.debug('[suggest] renderSuggestions remoteCount=', Array.isArray(list) ? list.length : 0, 'historyCount=', suggestHistory.length);
+
             suggestionsEl.innerHTML = '';
             activeIndex = -1;
 
@@ -1068,7 +1104,7 @@
                     del.addEventListener('mousedown', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.debug('[ui] delete history mousedown ->', entry.text);
+
                         // remove by value
                         removeHistoryItem(entry.text);
                         // re-render using same remote list
@@ -1089,7 +1125,7 @@
                 clearRow.textContent = 'Clear suggestion history';
                 clearRow.addEventListener('mousedown', (e) => {
                     e.preventDefault();
-                    console.debug('[ui] clear history mousedown');
+
                     if (confirm('Clear all suggestion history?')) {
                         clearHistory();
                         renderSuggestions(list);
@@ -1140,7 +1176,7 @@
             if (!q) return;
             // save to local suggest history first
             addToHistory(q);
-            console.debug('[search] submitSearch ->', q);
+
             const url = settings.engine + encodeURIComponent(q);
             window.location.href = url;
         }
@@ -1159,17 +1195,25 @@
                     e.preventDefault();
                     // keyboard nav: highlight via JS and suppress mouse hover briefly
                     const next = (activeIndex + 1) % items.length;
-                    highlightOnly(next, { focus: true });
+                    highlightOnly(next, {
+                        focus: true
+                    });
                     suppressMouseHover = true;
                     if (suppressMouseHoverTimer) clearTimeout(suppressMouseHoverTimer);
-                    suppressMouseHoverTimer = setTimeout(() => { suppressMouseHover = false; }, 300);
+                    suppressMouseHoverTimer = setTimeout(() => {
+                        suppressMouseHover = false;
+                    }, 300);
                 } else if (e.key === 'ArrowUp') {
                     e.preventDefault();
                     const prev = (activeIndex - 1 + items.length) % items.length;
-                    highlightOnly(prev, { focus: true });
+                    highlightOnly(prev, {
+                        focus: true
+                    });
                     suppressMouseHover = true;
                     if (suppressMouseHoverTimer) clearTimeout(suppressMouseHoverTimer);
-                    suppressMouseHoverTimer = setTimeout(() => { suppressMouseHover = false; }, 300);
+                    suppressMouseHoverTimer = setTimeout(() => {
+                        suppressMouseHover = false;
+                    }, 300);
                 } else if (e.key === 'Enter') {
                     if (activeIndex >= 0) {
                         e.preventDefault();
@@ -1189,22 +1233,23 @@
         });
         // Show history on focus when input is empty
         queryInput.addEventListener('focus', () => {
-            console.debug('[input] focus, value=', queryInput.value);
+
             if (!queryInput.value.trim() && suggestHistory && suggestHistory.length) {
                 renderSuggestions([]);
             }
         });
         window.addEventListener('load', () => {
             queryInput.focus()
+            try { markActiveWallpaper(settings && settings.wallpaper ? settings.wallpaper : null); } catch (e) {}
         });
 
         // Ensure we persist the latest settings before the page unloads — helps when localStorage is quota-sensitive
         window.addEventListener('beforeunload', () => {
             try {
                 saveSettings(settings);
-                console.debug('[settings] beforeunload saved settings');
+
             } catch (e) {
-                console.warn('[settings] beforeunload save failed', e);
+
             }
         });
         window.addEventListener('keydown', e => {
@@ -1248,7 +1293,7 @@
 
         // populate dynamic year in footer
         document.getElementById('year').textContent = new Date().getFullYear();
-    // debug panel removed
+        // debug panel removed
     </script>
 </body>
 
