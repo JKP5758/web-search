@@ -7,122 +7,54 @@
     <title>JKP Search Page</title>
     <meta name="description" content="Kunjugi halaman search yang lebih meanarik" />
     <link rel="icon" type="image/png/ico" href="https://jkp.my.id/assets//img//icons/favico.ico">
-    <!-- Tailwind Play CLI -->
+    <!-- Tailwind output (biarkan kalau kamu pake Tailwind build) -->
     <link href="./style.css" rel="stylesheet">
-    <style>
-        body {
-            transition: background-image .35s ease, background-color .35s ease, color .2s ease;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-
-        .glass {
-            background-color: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.25);
-        }
-
-        [data-theme="light"] .glass {
-            background-color: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(15, 23, 42, 0.06);
-            box-shadow: inset 0 1px 6px rgba(255, 255, 255, 0.6);
-        }
-
-        /* make .glass children slightly inset for 3d feel */
-        .glass>* {
-            box-shadow: inset 0 0 0 rgba(0, 0, 0, 0);
-        }
-
-        /* file input: hide native control and use themed label */
-        input[type="file"] {
-            display: none;
-        }
-
-        .file-label {
-            display: inline-flex;
-            align-items: center;
-            gap: .5rem;
-            padding: .5rem .75rem;
-            cursor: pointer;
-        }
-
-        /* CLS FIX: Settings panel as a fixed overlay */
-        #settingsPanel.is-visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* Engine button styles and active state */
-        .engineBtn {
-            /* ensure buttons are positioned for badge */
-            position: relative;
-            transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-        }
-
-        .engineBtn:hover {
-            transform: translateY(-3px);
-        }
-
-        .engineBtn.active {
-            box-shadow: 0 10px 28px rgba(59, 130, 246, 0.16);
-            border-color: rgba(59, 130, 246, 0.7);
-            transform: translateY(-4px) scale(1.06);
-        }
-
-        /* small check badge when active */
-        .engineBtn.active::after {
-            content: "\2713";
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background: rgba(59,130,246,0.95);
-            color: #fff;
-            width: 18px;
-            height: 18px;
-            border-radius: 9999px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            line-height: 1;
-            box-shadow: 0 2px 6px rgba(2,6,23,0.2);
-        }
-    </style>
 </head>
 
-<body class="min-h-screen flex flex-col items-center justify-start pt-20" data-theme="dark">
+<body class="min-h-screen flex flex-col items-center justify-start pt-20 transition-all duration-300" data-theme="dark">
     <main class="w-full max-w-2xl p-6 text-center">
         <div id="logo" class="mb-8">
             <div class="logo-row flex items-end justify-center gap-3 mb-1">
                 <!-- mascot image provided by user -->
-                <div class="mascot rounded-full p-1 flex items-center justify-center">
-                    <img src="./icon/maskot.webp" alt="Maskot" width="56" height="56" />
+                <div class="mascot rounded-full h-14 w-14 flex items-center justify-center overflow-hidden">
+                    <img src="./icon/maskot.webp" alt="Maskot" />
                 </div>
                 <h1 class="text-3xl font-semibold mb-0">Halo, Kakak ✨</h1>
             </div>
-            <p class="text-sm pt-2 opacity-80">tekan <kbd class="px-2 py-0.5 rounded-md glass">Enter</kbd> untuk mencari</p>
+            <p class="text-sm pt-2 opacity-80">tekan <kbd class="px-2 py-0.5 rounded-md
+              bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+              shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)]">Enter</kbd> untuk mencari</p>
         </div>
 
         <form id="searchForm" class="flex gap-3 items-center justify-center mb-6">
             <!-- Container untuk dropdown kustom -->
             <div class="relative hidden sm:block">
-                <div id="engineDropdownTrigger" class="glass w-12 h-12 flex items-center justify-center p-2 rounded-full cursor-pointer hover:bg-white/10 transition-colors" title="Pilih mesin pencari">
+                <div id="engineDropdownTrigger"
+                    class="w-12 h-12 flex items-center justify-center p-2 rounded-full cursor-pointer hover:bg-white/10 transition-colors
+                 bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                 shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)]"
+                    title="Pilih mesin pencari">
                     <img id="selectedEngineIcon" src="./icon/google.svg" alt="Google" class="w-6 h-6">
                 </div>
-                <ul id="engineDropdownMenu" class="glass hidden absolute left-0 top-full mt-2 w-48 p-2 rounded-xl z-50 text-left">
-                    <li data-value="https://www.google.com/search?q=" data-icon="./icon/google.svg" class="p-2 rounded-md cursor-pointer transition-colors hover:bg-white/10">
-                        <img src="./icon/google.svg" alt="Google" class="inline-block w-6 h-6 mr-2" /> Google
+                <ul id="engineDropdownMenu"
+                    class="hidden absolute left-0 top-full mt-2 w-48 p-2 rounded-xl z-50 text-left
+                 bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                 shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)]">
+                    <li data-value="https://www.google.com/search?q=" data-icon="./icon/google.svg"
+                        class="p-2 rounded-md cursor-pointer transition-colors hover:bg-white/10 flex items-center gap-2">
+                        <img src="./icon/google.svg" alt="Google" class="w-6 h-6" /> Google
                     </li>
-                    <li data-value="https://duckduckgo.com/?q=" data-icon="./icon/duckduckgo.svg" class="p-2 rounded-md cursor-pointer transition-colors hover:bg-white/10">
-                        <img src="./icon/duckduckgo.svg" alt="DuckDuckGo" class="inline-block w-6 h-6 mr-2" /> DuckDuckGo
+                    <li data-value="https://duckduckgo.com/?q=" data-icon="./icon/duckduckgo.svg"
+                        class="p-2 rounded-md cursor-pointer transition-colors hover:bg-white/10 flex items-center gap-2">
+                        <img src="./icon/duckduckgo.svg" alt="DuckDuckGo" class="w-6 h-6" /> DuckDuckGo
                     </li>
-                    <li data-value="https://www.bing.com/search?q=" data-icon="./icon/bing.svg" class="p-2 rounded-md cursor-pointer transition-colors hover:bg-white/10">
-                        <img src="./icon/bing.svg" alt="Bing" class="inline-block w-6 h-6 mr-2" /> Bing
+                    <li data-value="https://www.bing.com/search?q=" data-icon="./icon/bing.svg"
+                        class="p-2 rounded-md cursor-pointer transition-colors hover:bg-white/10 flex items-center gap-2">
+                        <img src="./icon/bing.svg" alt="Bing" class="w-6 h-6" /> Bing
                     </li>
-                    <li data-value="https://search.brave.com/search?q=" data-icon="./icon/brave.svg" class="p-2 rounded-md cursor-pointer transition-colors hover:bg-white/10">
-                        <img src="./icon/brave.svg" alt="Brave" class="inline-block w-6 h-6 mr-2" /> Brave
+                    <li data-value="https://search.brave.com/search?q=" data-icon="./icon/brave.svg"
+                        class="p-2 rounded-md cursor-pointer transition-colors hover:bg-white/10 flex items-center gap-2">
+                        <img src="./icon/brave.svg" alt="Brave" class="w-6 h-6" /> Brave
                     </li>
                 </ul>
             </div>
@@ -135,19 +67,36 @@
                 <option value="https://search.brave.com/search?q=">Brave</option>
             </select>
 
-            <input id="customEngineInput" class="p-3 flex-1 glass text-sm rounded-full focus:outline-none focus:shadow-xl focus:border-blue-500 transition-all" placeholder="Custom engine base URL" style="display:none;" />
+            <input id="customEngineInput"
+                class="hidden p-3 flex-1 bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+               shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm rounded-full focus:outline-none focus:shadow-xl focus:border-blue-500 transition-all"
+                placeholder="Custom engine base URL" />
 
             <div class="relative flex-1">
-                <input id="queryInput" type="search" name="q" autocomplete="off" class="py-3 px-5 w-full text-lg font-medium glass placeholder:text-white/50 overflow-hidden text-ellipsis rounded-full focus:outline-none focus:shadow-xl focus:border-blue-500 transition-all" placeholder="Cari sesuatu..." />
-                <div id="suggestions" class="suggestions absolute inset-x-0 top-full mt-2 glass rounded-xl shadow-xl overflow-hidden z-40 max-h-72 overflow-y-auto" style="display:none;"></div>
-                <button type="button" id="clearInput" aria-label="Clear" class="absolute right-14 top-1/2 -translate-y-1/2 border-0 bg-transparent text-white/70 w-7 h-7 flex items-center justify-center rounded-full cursor-pointer hover:bg-white/5 transition-colors" title="Clear" style="display:none;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                <input id="queryInput" type="search" name="q" autocomplete="off"
+                    class="py-3 px-5 w-full text-lg font-medium bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px]
+                 border border-[rgba(255,255,255,0.06)] shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)]
+                 placeholder:text-white/50 overflow-hidden text-ellipsis rounded-full focus:outline-none focus:shadow-xl focus:border-blue-500 transition-all"
+                    placeholder="Cari sesuatu..." />
+                <div id="suggestions"
+                    class="hidden suggestions absolute inset-x-0 top-full mt-2 bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px]
+                 rounded-xl shadow-xl overflow-hidden z-40 max-h-72 overflow-y-auto"></div>
+
+                <button type="button" id="clearInput" aria-label="Clear"
+                    class="hidden absolute right-14 top-1/2 -translate-y-1/2 border-0 bg-transparent text-white/70 w-7 h-7 flex items-center justify-center rounded-full cursor-pointer hover:bg-white/5 transition-colors"
+                    title="Clear">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="w-4 h-4">
                         <line x1="18" y1="6" x2="6" y2="18" />
                         <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
                 </button>
-                <button type="submit" aria-label="Search" class="w-11 h-11 flex items-center justify-center border-0 rounded-full bg-white/10 text-cyan-400 cursor-pointer hover:bg-white/20  transition-all absolute right-2 top-1/2 -translate-y-1/2" title="Search">
-                    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+
+                <button type="submit" aria-label="Search"
+                    class="w-11 h-11 flex items-center justify-center border-0 rounded-full bg-white/10 text-cyan-400 cursor-pointer hover:bg-white/20 transition-all absolute right-2 top-1/2 -translate-y-1/2"
+                    title="Search">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
                         <circle cx="11" cy="11" r="7"></circle>
                         <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
                     </svg>
@@ -156,66 +105,107 @@
         </form>
 
         <!-- Settings panel as a fixed overlay to prevent CLS -->
-        <aside id="settingsPanel" class="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity">
-            <div class="settings-content w-full max-w-md p-6 glass rounded-xl text-left">
+        <aside id="settingsPanel"
+            class="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200">
+            <div
+                class="settings-content w-full max-w-md p-6 bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+               shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] rounded-xl text-left">
                 <h2 class="font-semibold mb-3">Pengaturan</h2>
                 <div class="flex items-center gap-3 mb-3">
                     <label class="flex-1 text-sm hidden">Tema</label>
                     <div class="flex gap-2 items-center">
-                        <button id="toggleTheme" class="px-3 py-1 rounded-md glass hidden">Toggle</button>
+                        <button id="toggleTheme" class="px-3 py-1 rounded-md hidden">Toggle</button>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="text-sm">Wallpaper</label>
                     <div class="flex flex-wrap gap-2 mt-2">
-                        <button data-preset="none" class="presetBtn p-2 rounded-full glass text-sm transition-transform hover:bg-white/10">Default</button>
-                        <button data-preset="./bg/bg01.webp" class="presetBtn p-2 rounded-full glass text-sm transition-transform hover:bg-white/10">Preset 1</button>
-                        <button data-preset="./bg/bg02.webp" class="presetBtn p-2 rounded-full glass text-sm transition-transform hover:bg-white/10">Preset 2</button>
-                        <button data-preset="./bg/bg04.webp" class="presetBtn p-2 rounded-full glass text-sm transition-transform hover:bg-white/10">Preset 3</button>
-                        <button data-preset="https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?q=80&w=1400&auto=format&fit=crop&s=1" class="presetBtn p-2 rounded-full glass text-sm transition-transform hover:bg-white/10">Preset 4</button>
+                        <button data-preset="none"
+                            class="p-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Default</button>
+                        <button data-preset="./bg/bg01.webp"
+                            class="p-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Preset 1</button>
+                        <button data-preset="./bg/bg02.webp"
+                            class="p-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Preset 2</button>
+                        <button data-preset="./bg/bg04.webp"
+                            class="p-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Preset 3</button>
+                        <button data-preset="https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?q=80&w=1400&auto=format&fit=crop&s=1"
+                            class="p-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Preset 4</button>
                     </div>
                     <div class="mt-3 flex gap-2 items-center">
-                        <input id="uploadBg" type="file" accept="image/*" class="text-sm" />
-                        <label for="uploadBg" class="file-label glass text-sm p-2 rounded-full transition-transform hover:bg-white/10">📁 Pilih gambar...</label>
-                        <button id="removeBg" class="p-2 rounded-full glass text-sm transition-transform hover:bg-white/10">Remove</button>
+                        <input id="uploadBg" type="file" accept="image/*" class="text-sm hidden" />
+                        <label for="uploadBg"
+                            class="inline-flex items-center gap-2 bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm p-2 rounded-full cursor-pointer hover:bg-white/10">📁 Pilih gambar...</label>
+                        <button id="removeBg"
+                            class="p-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                     shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] text-sm transition-transform hover:bg-white/10">Remove</button>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="text-sm">Default Search Engine</label>
                     <div id="defaultEngineButtons" class="flex flex-wrap gap-2 mt-2">
-                        <button class="engineBtn w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full glass cursor-pointer transition-transform hover:bg-white/10" data-value="https://www.google.com/search?q=">
+                        <button class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
+                           bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                           shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] cursor-pointer transition-transform hover:-translate-y-1 hover:shadow-md"
+                            data-value="https://www.google.com/search?q=">
                             <img src="./icon/google.svg" class="engine-icon w-5 h-5" alt="Google">
                         </button>
-                        <button class="engineBtn w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full glass cursor-pointer transition-transform hover:bg-white/10" data-value="https://duckduckgo.com/?q=">
+                        <button class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
+                           bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                           shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] cursor-pointer transition-transform hover:-translate-y-1 hover:shadow-md"
+                            data-value="https://duckduckgo.com/?q=">
                             <img src="./icon/duckduckgo.svg" class="engine-icon w-5 h-5" alt="DuckDuckGo">
                         </button>
-                        <button class="engineBtn w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full glass cursor-pointer transition-transform hover:bg-white/10" data-value="https://www.bing.com/search?q=">
+                        <button class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
+                           bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                           shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] cursor-pointer transition-transform hover:-translate-y-1 hover:shadow-md"
+                            data-value="https://www.bing.com/search?q=">
                             <img src="./icon/bing.svg" class="engine-icon w-5 h-5" alt="Bing">
                         </button>
-                        <button class="engineBtn w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full glass cursor-pointer transition-transform hover:bg-white/10" data-value="https://search.brave.com/search?q=">
+                        <button class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
+                           bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                           shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] cursor-pointer transition-transform hover:-translate-y-1 hover:shadow-md"
+                            data-value="https://search.brave.com/search?q=">
                             <img src="./icon/brave.svg" class="engine-icon w-5 h-5" alt="Brave">
                         </button>
-                        <button class="engineBtn w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full glass cursor-pointer transition-transform hover:bg-white/10" data-value="custom">
-                            <svg class="engine-icon w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <button class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
+                           bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                           shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] cursor-pointer transition-transform hover:-translate-y-1 hover:shadow-md"
+                            data-value="custom">
+                            <svg class="engine-icon w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 20v-8m0 0V4m0 8h8m-8 0H4" />
                             </svg>
                         </button>
                     </div>
-                    <input id="defaultEngineCustom" placeholder="Custom engine base URL" class="mt-2 p-2 rounded-full glass w-full focus:outline-none focus:shadow-xl focus:border-blue-500 transition-all" style="display:none;" />
+                    <input id="defaultEngineCustom" placeholder="Custom engine base URL"
+                        class="hidden mt-2 p-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                   shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] w-full focus:outline-none focus:shadow-xl focus:border-blue-500 transition-all" />
                 </div>
 
                 <div class="flex justify-between mt-4">
-                    <button id="resetBtn" class="px-4 py-2 rounded-full glass transition-transform hover:bg-white/10 text-red-500/80">Reset</button>
-                        <button id="cancelSettings" class="px-4 py-2 rounded-full glass transition-transform hover:bg-white/10">Close</button>
+                    <button id="resetBtn"
+                        class="px-4 py-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                   shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] transition-transform hover:bg-white/10 text-red-500/80">Reset</button>
+                    <button id="cancelSettings"
+                        class="px-4 py-2 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+                   shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] transition-transform hover:bg-white/10">Close</button>
                 </div>
             </div>
         </aside>
     </main>
 
     <!-- Floating settings button -->
-    <button id="settingsBtn" class="fixed bottom-4 right-4 p-3 glass rounded-full shadow-lg">⚙️</button>
+    <button id="settingsBtn"
+        class="fixed bottom-4 right-4 p-3 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+           shadow-lg">⚙️</button>
 
     <footer class="mt-8 text-xs opacity-70 text-center w-full pb-4">
         © <a href="http://jkp.my.id" target="_blank" rel="noopener noreferrer">JKP</a> • <span id="year"></span> • local settings
@@ -273,7 +263,7 @@
         const engineSelect = document.getElementById('engineSelect');
         const customEngineInput = document.getElementById('customEngineInput');
         const defaultEngineCustom = document.getElementById('defaultEngineCustom');
-        const presetBtns = document.querySelectorAll('.presetBtn');
+        const presetBtns = document.querySelectorAll('[data-preset]');
         const uploadBg = document.getElementById('uploadBg');
         const removeBg = document.getElementById('removeBg');
         const queryInput = document.getElementById('queryInput');
@@ -283,7 +273,6 @@
         const engineDropdownTrigger = document.getElementById('engineDropdownTrigger');
         const engineDropdownMenu = document.getElementById('engineDropdownMenu');
         const selectedEngineIcon = document.getElementById('selectedEngineIcon');
-        const engineMenuItems = engineDropdownMenu.querySelectorAll('li');
 
         // New elements for the settings radio buttons
         const defaultEngineButtons = document.getElementById('defaultEngineButtons').querySelectorAll('.engineBtn');
@@ -292,43 +281,56 @@
 
         // suggestions filtering: terms to block from appearing in Google Suggest
         const SUGGEST_BANNED = [
-            'gacor',
-            'slot',
-            'bet',
-            'jackpot',
-            'casino',
-            'judi',
-            'togel',
-            'rtp',
-            'judi',
-            'qq',
-            'judol',
-            '88',
-            '77',
-            '99',
-            '11',
-            'zeus',
-            'gates',
-            'hoki',
-            'win',
-            'toto'
-
-            // add more terms here as needed
+            'gacor', 'slot', 'bet', 'jackpot', 'casino', 'judi', 'togel', 'rtp', 'judi',
+            'qq', 'judol', '88', '77', '99', '11', 'zeus', 'gates', 'hoki', 'win', 'toto'
         ];
 
         function applyTheme(theme) {
             body.setAttribute('data-theme', theme);
             if (theme === 'dark') {
+                body.classList.remove('light-theme');
                 body.style.color = 'white';
                 body.style.backgroundColor = '#0b1020'
             } else {
+                body.classList.add('light-theme');
                 body.style.color = '#0b1020';
                 body.style.backgroundColor = '#f3f4f6'
             }
         }
 
         function applyWallpaper(wallpaper) {
-            body.style.backgroundImage = wallpaper ? `url('${wallpaper}')` : ''
+            if (wallpaper) {
+                body.style.backgroundImage = `url('${wallpaper}')`;
+                // make sure the background image covers the viewport and is centered
+                body.style.backgroundSize = 'cover';
+                body.style.backgroundPosition = 'center center';
+                body.style.backgroundRepeat = 'no-repeat';
+                // keep background fixed so it doesn't scroll with content
+                body.style.backgroundAttachment = 'fixed';
+            } else {
+                body.style.backgroundImage = '';
+                body.style.backgroundSize = '';
+                body.style.backgroundPosition = '';
+                body.style.backgroundRepeat = '';
+                body.style.backgroundAttachment = '';
+            }
+        }
+
+        // helper to visually mark an engine button active (adds small check element + shadow)
+        function setEngineBtnActive(btn, isActive) {
+            if (isActive) {
+                btn.classList.add('shadow-[0_10px_28px_rgba(59,130,246,0.16)]', 'border-[rgba(59,130,246,0.7)]', 'scale-105', '-translate-y-1.5');
+                if (!btn.querySelector('.engine-check')) {
+                    const span = document.createElement('span');
+                    span.className = 'engine-check absolute top-1 right-1 bg-[rgba(59,130,246,0.95)] text-white w-4 h-4 rounded-full flex items-center justify-center text-[11px]';
+                    span.textContent = '✓';
+                    btn.appendChild(span);
+                }
+            } else {
+                btn.classList.remove('shadow-[0_10px_28px_rgba(59,130,246,0.16)]', 'border-[rgba(59,130,246,0.7)]', 'scale-105', '-translate-y-1.5');
+                const c = btn.querySelector('.engine-check');
+                if (c) c.remove();
+            }
         }
 
         function applySettings(s) {
@@ -339,18 +341,20 @@
             const matched = known.includes(s.engine) ? s.engine : 'custom';
             engineSelect.value = matched === 'custom' ? 'custom' : matched;
             if (matched === 'custom') {
-                customEngineInput.style.display = 'block';
+                customEngineInput.classList.remove('hidden');
                 customEngineInput.value = s.engine
-            } else customEngineInput.style.display = 'none';
+            } else customEngineInput.classList.add('hidden');
 
-            // Update settings radio buttons
+            // Update settings radio buttons (visual active)
             defaultEngineButtons.forEach(btn => {
-                btn.classList.remove('active');
+                setEngineBtnActive(btn, false);
                 if (btn.dataset.value === s.engine || (btn.dataset.value === 'custom' && !known.includes(s.engine))) {
-                    btn.classList.add('active');
-                    defaultEngineCustom.style.display = (btn.dataset.value === 'custom') ? 'block' : 'none';
+                    setEngineBtnActive(btn, true);
                     if (btn.dataset.value === 'custom') {
+                        defaultEngineCustom.classList.remove('hidden');
                         defaultEngineCustom.value = s.engine;
+                    } else {
+                        defaultEngineCustom.classList.add('hidden');
                     }
                 }
             });
@@ -367,14 +371,22 @@
 
         applySettings(settings);
 
+        // Settings panel toggle (use Tailwind classes for visibility)
         settingsBtn.addEventListener('click', () => {
-            settingsPanel.classList.toggle('is-visible');
+            const isOpen = settingsPanel.classList.contains('opacity-100');
+            if (isOpen) {
+                settingsPanel.classList.remove('opacity-100', 'pointer-events-auto');
+                settingsPanel.classList.add('opacity-0', 'pointer-events-none');
+            } else {
+                settingsPanel.classList.add('opacity-100', 'pointer-events-auto');
+                settingsPanel.classList.remove('opacity-0', 'pointer-events-none');
+            }
         });
         cancelSettingsBtn.addEventListener('click', () => {
-            settingsPanel.classList.remove('is-visible');
+            settingsPanel.classList.remove('opacity-100', 'pointer-events-auto');
+            settingsPanel.classList.add('opacity-0', 'pointer-events-none');
         });
         resetBtn.addEventListener('click', () => {
-            // Use a custom modal instead of alert/confirm
             const result = confirm('Reset semua pengaturan ke default?');
             if (result) {
                 settings = {
@@ -388,7 +400,6 @@
         toggleThemeBtn.addEventListener('click', () => {
             settings.theme = settings.theme === 'dark' ? 'light' : 'dark';
             applyTheme(settings.theme);
-            // persist theme change immediately
             saveSettings(settings);
         });
 
@@ -398,24 +409,31 @@
             engineDropdownMenu.classList.toggle('hidden');
         });
 
-        engineMenuItems.forEach(item => {
+        engineDropdownMenu.querySelectorAll('li').forEach(item => {
             item.addEventListener('click', () => {
                 const value = item.getAttribute('data-value');
                 const icon = item.getAttribute('data-icon');
                 selectedEngineIcon.src = icon;
                 engineDropdownMenu.classList.add('hidden');
                 engineSelect.value = value;
+                settings.engine = value;
+                saveSettings(settings);
             });
         });
 
         // Event listener for settings radio buttons (autosave immediately)
         defaultEngineButtons.forEach(btn => {
             btn.addEventListener('click', () => {
-                defaultEngineButtons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+                defaultEngineButtons.forEach(b => setEngineBtnActive(b, false));
+                setEngineBtnActive(btn, true);
                 const value = btn.dataset.value;
-                defaultEngineCustom.style.display = (value === 'custom') ? 'block' : 'none';
-                settings.engine = (value === 'custom') ? defaultEngineCustom.value : value;
+                if (value === 'custom') {
+                    defaultEngineCustom.classList.remove('hidden');
+                    settings.engine = defaultEngineCustom.value || '';
+                } else {
+                    defaultEngineCustom.classList.add('hidden');
+                    settings.engine = value;
+                }
                 // autosave and apply immediately
                 saveSettings(settings);
                 applySettings(settings);
@@ -425,8 +443,10 @@
         // autosave when user edits custom engine input
         if (defaultEngineCustom) {
             defaultEngineCustom.addEventListener('input', () => {
-                const activeBtn = document.querySelector('#defaultEngineButtons .engineBtn.active');
-                if (activeBtn && activeBtn.dataset.value === 'custom') {
+                const activeBtn = document.querySelector('#defaultEngineButtons .engineBtn');
+                // find the active one by checking for engine-check badge
+                const active = Array.from(defaultEngineButtons).find(b => b.querySelector('.engine-check'));
+                if (active && active.dataset.value === 'custom') {
                     settings.engine = defaultEngineCustom.value;
                     saveSettings(settings);
                 }
@@ -467,7 +487,8 @@
             applyWallpaper(null)
             saveSettings(settings);
         });
-    // Save button removed: settings are saved automatically when changed
+
+        // Save button removed: settings are saved automatically when changed
         searchForm.addEventListener('submit', e => {
             e.preventDefault();
             const q = queryInput.value.trim();
@@ -476,14 +497,19 @@
             const url = settings.engine + encodeURIComponent(q);
             window.location.href = url
         });
+
         // clear button behaviour
         queryInput.addEventListener('input', () => {
-            clearBtn.style.display = queryInput.value ? 'inline-flex' : 'none';
+            if (queryInput.value) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
             scheduleSuggest(queryInput.value);
         });
         clearBtn.addEventListener('click', () => {
             queryInput.value = '';
-            clearBtn.style.display = 'none';
+            clearBtn.classList.add('hidden');
             queryInput.focus();
             hideSuggestions();
         });
@@ -506,7 +532,9 @@
         function fetchSuggest(q) {
             // cleanup previous
             if (currentScript) {
-                document.head.removeChild(currentScript);
+                try {
+                    document.head.removeChild(currentScript);
+                } catch (e) {}
                 currentScript = null;
             }
             const cbName = 'gSuggestCB_' + Date.now();
@@ -560,11 +588,11 @@
                 });
                 suggestionsEl.appendChild(it);
             });
-            suggestionsEl.style.display = 'block';
+            suggestionsEl.classList.remove('hidden');
         }
 
         function hideSuggestions() {
-            suggestionsEl.style.display = 'none';
+            suggestionsEl.classList.add('hidden');
             suggestionsEl.innerHTML = '';
             activeIndex = -1;
         }
@@ -590,7 +618,7 @@
         // keyboard navigation
         queryInput.addEventListener('keydown', (e) => {
             const items = suggestionsEl.querySelectorAll('.suggestion-item');
-            if (suggestionsEl.style.display === 'block' && items.length) {
+            if (!suggestionsEl.classList.contains('hidden') && items.length) {
                 if (e.key === 'ArrowDown') {
                     e.preventDefault();
                     selectSuggestion((activeIndex + 1) % items.length);
@@ -627,16 +655,30 @@
             if (!['INPUT', 'TEXTAREA', 'SELECT'].includes(activeTag)) {
                 if ((e.ctrlKey || e.metaKey) && e.key === ',') {
                     e.preventDefault();
-                    settingsPanel.classList.toggle('is-visible');
+                    const isOpen = settingsPanel.classList.contains('opacity-100');
+                    if (isOpen) {
+                        settingsPanel.classList.remove('opacity-100', 'pointer-events-auto');
+                        settingsPanel.classList.add('opacity-0', 'pointer-events-none');
+                    } else {
+                        settingsPanel.classList.add('opacity-100', 'pointer-events-auto');
+                        settingsPanel.classList.remove('opacity-0', 'pointer-events-none');
+                    }
                 } else if (e.key.toLowerCase() === 's') {
                     e.preventDefault();
-                    settingsPanel.classList.toggle('is-visible');
+                    const isOpen = settingsPanel.classList.contains('opacity-100');
+                    if (isOpen) {
+                        settingsPanel.classList.remove('opacity-100', 'pointer-events-auto');
+                        settingsPanel.classList.add('opacity-0', 'pointer-events-none');
+                    } else {
+                        settingsPanel.classList.add('opacity-100', 'pointer-events-auto');
+                        settingsPanel.classList.remove('opacity-0', 'pointer-events-none');
+                    }
                 }
             }
 
             // close settings with Escape
             if (e.key === 'Escape') {
-                if (settingsPanel.classList.contains('is-visible')) settingsPanel.classList.remove('is-visible');
+                if (settingsPanel.classList.contains('opacity-100')) settingsPanel.classList.remove('opacity-100', 'pointer-events-auto');
             }
         });
 
