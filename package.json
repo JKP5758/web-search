@@ -1,0 +1,18 @@
+{
+  "name": "serch",
+  "version": "1.0.0",
+  "description": "Halaman startpage modern dan minimalis untuk browser kamu.   Dilengkapi dengan wallpaper custom, search engine pilihan, dan tampilan bergaya glassmorphism.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tailwind-start": "npx @tailwindcss/cli -i ./global.css -o ./style.css --watch",
+    "tailwind-build": "npx @tailwindcss/cli -i ./global.css -o ./style.css --minify"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.12",
+    "tailwindcss": "^4.1.12"
+  }
+}

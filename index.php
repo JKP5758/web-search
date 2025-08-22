@@ -53,6 +53,42 @@
             opacity: 1;
             pointer-events: auto;
         }
+
+        /* Engine button styles and active state */
+        .engineBtn {
+            /* ensure buttons are positioned for badge */
+            position: relative;
+            transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+        }
+
+        .engineBtn:hover {
+            transform: translateY(-3px);
+        }
+
+        .engineBtn.active {
+            box-shadow: 0 10px 28px rgba(59, 130, 246, 0.16);
+            border-color: rgba(59, 130, 246, 0.7);
+            transform: translateY(-4px) scale(1.06);
+        }
+
+        /* small check badge when active */
+        .engineBtn.active::after {
+            content: "\2713";
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(59,130,246,0.95);
+            color: #fff;
+            width: 18px;
+            height: 18px;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            line-height: 1;
+            box-shadow: 0 2px 6px rgba(2,6,23,0.2);
+        }
     </style>
 </head>
 
@@ -71,11 +107,11 @@
 
         <form id="searchForm" class="flex gap-3 items-center justify-center mb-6">
             <!-- Container untuk dropdown kustom -->
-            <div class="custom-dropdown-container relative max-sm:hidden">
-                <div id="engineDropdownTrigger" class="custom-dropdown-trigger glass w-12 h-12 flex items-center justify-center p-2 rounded-full cursor-pointer hover:bg-white/10 transition-colors" title="Pilih mesin pencari">
+            <div class="relative hidden sm:block">
+                <div id="engineDropdownTrigger" class="glass w-12 h-12 flex items-center justify-center p-2 rounded-full cursor-pointer hover:bg-white/10 transition-colors" title="Pilih mesin pencari">
                     <img id="selectedEngineIcon" src="./icon/google.svg" alt="Google" class="w-6 h-6">
                 </div>
-                <ul id="engineDropdownMenu" class="custom-dropdown-menu glass hidden absolute left-0 top-full mt-2 w-48 p-2 rounded-xl z-50 text-left">
+                <ul id="engineDropdownMenu" class="glass hidden absolute left-0 top-full mt-2 w-48 p-2 rounded-xl z-50 text-left">
                     <li data-value="https://www.google.com/search?q=" data-icon="./icon/google.svg" class="p-2 rounded-md cursor-pointer transition-colors hover:bg-white/10">
                         <img src="./icon/google.svg" alt="Google" class="inline-block w-6 h-6 mr-2" /> Google
                     </li>
@@ -101,16 +137,16 @@
 
             <input id="customEngineInput" class="p-3 flex-1 glass text-sm rounded-full focus:outline-none focus:shadow-xl focus:border-blue-500 transition-all" placeholder="Custom engine base URL" style="display:none;" />
 
-            <div class="input-group relative flex-1">
-                <input id="queryInput" type="search" name="q" autocomplete="off" class="p-3 w-full text-lg font-medium glass placeholder:text-white/50 overflow-hidden text-ellipsis rounded-full focus:outline-none focus:shadow-xl focus:border-blue-500 transition-all" placeholder="Cari sesuatu..." />
+            <div class="relative flex-1">
+                <input id="queryInput" type="search" name="q" autocomplete="off" class="py-3 px-5 w-full text-lg font-medium glass placeholder:text-white/50 overflow-hidden text-ellipsis rounded-full focus:outline-none focus:shadow-xl focus:border-blue-500 transition-all" placeholder="Cari sesuatu..." />
                 <div id="suggestions" class="suggestions absolute inset-x-0 top-full mt-2 glass rounded-xl shadow-xl overflow-hidden z-40 max-h-72 overflow-y-auto" style="display:none;"></div>
-                <button type="button" id="clearInput" aria-label="Clear" class="btn-clear absolute right-12 top-1/2 -translate-y-1/2 border-0 bg-transparent text-white/70 w-7 h-7 flex items-center justify-center rounded-full cursor-pointer hover:bg-white/5 transition-colors" title="Clear" style="display:none;">
+                <button type="button" id="clearInput" aria-label="Clear" class="absolute right-14 top-1/2 -translate-y-1/2 border-0 bg-transparent text-white/70 w-7 h-7 flex items-center justify-center rounded-full cursor-pointer hover:bg-white/5 transition-colors" title="Clear" style="display:none;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
                         <line x1="18" y1="6" x2="6" y2="18" />
                         <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
                 </button>
-                <button type="submit" aria-label="Search" class="btn-search w-11 h-11 flex items-center justify-center border-0 rounded-full bg-white/10 text-cyan-400 cursor-pointer hover:bg-white/20  transition-all absolute right-2 top-1/2 -translate-y-1/2" title="Search">
+                <button type="submit" aria-label="Search" class="w-11 h-11 flex items-center justify-center border-0 rounded-full bg-white/10 text-cyan-400 cursor-pointer hover:bg-white/20  transition-all absolute right-2 top-1/2 -translate-y-1/2" title="Search">
                     <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
                         <circle cx="11" cy="11" r="7"></circle>
                         <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
@@ -171,11 +207,8 @@
                 </div>
 
                 <div class="flex justify-between mt-4">
-                    <div class="flex gap-2">
-                        <button id="saveSettings" class="px-4 py-2 rounded-full glass transition-transform hover:bg-white/10">Save</button>
-                        <button id="cancelSettings" class="px-4 py-2 rounded-full glass transition-transform hover:bg-white/10">Close</button>
-                    </div>
                     <button id="resetBtn" class="px-4 py-2 rounded-full glass transition-transform hover:bg-white/10 text-red-500/80">Reset</button>
+                        <button id="cancelSettings" class="px-4 py-2 rounded-full glass transition-transform hover:bg-white/10">Close</button>
                 </div>
             </div>
         </aside>
@@ -234,7 +267,6 @@
         const body = document.body;
         const settingsBtn = document.getElementById('settingsBtn');
         const settingsPanel = document.getElementById('settingsPanel');
-        const saveSettingsBtn = document.getElementById('saveSettings');
         const cancelSettingsBtn = document.getElementById('cancelSettings');
         const resetBtn = document.getElementById('resetBtn');
         const toggleThemeBtn = document.getElementById('toggleTheme');
@@ -376,7 +408,7 @@
             });
         });
 
-        // Event listener for settings radio buttons
+        // Event listener for settings radio buttons (autosave immediately)
         defaultEngineButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 defaultEngineButtons.forEach(b => b.classList.remove('active'));
@@ -384,8 +416,22 @@
                 const value = btn.dataset.value;
                 defaultEngineCustom.style.display = (value === 'custom') ? 'block' : 'none';
                 settings.engine = (value === 'custom') ? defaultEngineCustom.value : value;
+                // autosave and apply immediately
+                saveSettings(settings);
+                applySettings(settings);
             });
         });
+
+        // autosave when user edits custom engine input
+        if (defaultEngineCustom) {
+            defaultEngineCustom.addEventListener('input', () => {
+                const activeBtn = document.querySelector('#defaultEngineButtons .engineBtn.active');
+                if (activeBtn && activeBtn.dataset.value === 'custom') {
+                    settings.engine = defaultEngineCustom.value;
+                    saveSettings(settings);
+                }
+            });
+        }
 
         // Close all dropdowns when clicking outside
         document.addEventListener('click', (event) => {
@@ -421,17 +467,7 @@
             applyWallpaper(null)
             saveSettings(settings);
         });
-        saveSettingsBtn.addEventListener('click', () => {
-            const activeBtn = document.querySelector('#defaultEngineButtons .engineBtn.active');
-            if (activeBtn) {
-                const value = activeBtn.dataset.value;
-                settings.engine = (value === 'custom') ? defaultEngineCustom.value : value;
-            }
-            saveSettings(settings);
-            applySettings(settings);
-            settingsPanel.classList.remove('is-visible');
-            alert('Pengaturan tersimpan.')
-        });
+    // Save button removed: settings are saved automatically when changed
         searchForm.addEventListener('submit', e => {
             e.preventDefault();
             const q = queryInput.value.trim();
