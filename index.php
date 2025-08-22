@@ -498,6 +498,20 @@
 
         let settings = loadSettings();
 
+        // suggestions filtering: terms to block from appearing in Google Suggest
+        const SUGGEST_BANNED = [
+            'gacor',
+            'slot',
+            'bet',
+            'jackpot',
+            'casino',
+            'judi',
+            'togel',
+            'rtp',
+            'judi'
+            // add more terms here as needed
+        ];
+
         function applyTheme(theme) {
             body.setAttribute('data-theme', theme);
             if (theme === 'dark') {
@@ -726,7 +740,17 @@
                 hideSuggestions();
                 return;
             }
-            list.forEach((s, i) => {
+            // filter out banned terms (case-insensitive substring match)
+            const filtered = list.filter(s => {
+                if (!s) return false;
+                const lower = s.toLowerCase();
+                return !SUGGEST_BANNED.some(term => lower.includes(term));
+            });
+            if (!filtered.length) {
+                hideSuggestions();
+                return;
+            }
+            filtered.forEach((s, i) => {
                 const it = document.createElement('div');
                 it.className = 'suggestion-item';
                 it.textContent = s;
