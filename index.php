@@ -201,31 +201,31 @@
                 <div class="mb-3">
                     <label class="text-sm">Default Search Engine</label>
                     <div id="defaultEngineButtons" class="flex flex-wrap gap-2 mt-2">
-                        <button class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
+                        <button type="button" aria-label="Google" class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
                            bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
                            shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] cursor-pointer transition-transform hover:-translate-y-1 hover:shadow-md"
                             data-value="https://www.google.com/search?q=">
                             <img src="./icon/google.svg" class="engine-icon w-5 h-5" alt="Google">
                         </button>
-                        <button class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
+                        <button type="button" aria-label="DuckDuckGo" class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
                            bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
                            shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] cursor-pointer transition-transform hover:-translate-y-1 hover:shadow-md"
                             data-value="https://duckduckgo.com/?q=">
                             <img src="./icon/duckduckgo.svg" class="engine-icon w-5 h-5" alt="DuckDuckGo">
                         </button>
-                        <button class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
+                        <button type="button" aria-label="Bing" class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
                            bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
                            shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] cursor-pointer transition-transform hover:-translate-y-1 hover:shadow-md"
                             data-value="https://www.bing.com/search?q=">
                             <img src="./icon/bing.svg" class="engine-icon w-5 h-5" alt="Bing">
                         </button>
-                        <button class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
+                        <button type="button" aria-label="Brave" class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
                            bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
                            shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] cursor-pointer transition-transform hover:-translate-y-1 hover:shadow-md"
                             data-value="https://search.brave.com/search?q=">
                             <img src="./icon/brave.svg" class="engine-icon w-5 h-5" alt="Brave">
                         </button>
-                        <button class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
+                        <button type="button" aria-label="Custom search engine" class="engineBtn relative w-11 h-11 flex flex-col items-center justify-center p-1 rounded-full
                            bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
                            shadow-[inset_0_1px_6px_rgba(0,0,0,0.25)] cursor-pointer transition-transform hover:-translate-y-1 hover:shadow-md"
                             data-value="custom">
