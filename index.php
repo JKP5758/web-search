@@ -211,6 +211,27 @@
         © <a href="http://jkp.my.id" target="_blank" rel="noopener noreferrer">JKP</a> • <span id="year"></span> • local settings
     </footer>
 
+    <!-- Debug overlay for suggestion history inspection -->
+    <div id="debugToggle" title="Toggle debug" style="position:fixed;left:8px;bottom:8px;z-index:60;">
+        <button id="dbgBtn" class="p-2 rounded-full bg-[rgba(255,255,255,0.06)]">🐞</button>
+    </div>
+    <div id="debugPanel" style="position:fixed;left:12px;bottom:56px;z-index:60;min-width:280px;max-width:420px;display:none;padding:10px;border-radius:8px;background:rgba(0,0,0,0.7);color:#fff;font-size:13px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <strong>Suggest History Debug</strong>
+            <button id="dbgClose" style="background:transparent;border:0;color:#fff;cursor:pointer">✕</button>
+        </div>
+        <div id="dbgInfo" style="max-height:220px;overflow:auto;background:rgba(255,255,255,0.02);padding:8px;border-radius:6px;margin-bottom:6px;font-family:monospace;white-space:pre-wrap;"></div>
+        <div style="display:flex;gap:6px;margin-bottom:6px;">
+            <button id="dbgDump" class="px-2 py-1 rounded bg-white/5">Dump console</button>
+            <button id="dbgReload" class="px-2 py-1 rounded bg-white/5">Reload</button>
+            <button id="dbgClear" class="px-2 py-1 rounded bg-red-600/60">Force Clear</button>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+            <input id="dbgRemoveInput" placeholder="value to remove" style="flex:1;padding:6px;border-radius:6px;border:0;background:rgba(255,255,255,0.03);color:#fff;font-size:13px;" />
+            <button id="dbgRemove" class="px-2 py-1 rounded bg-white/5">Remove</button>
+        </div>
+    </div>
+
     <script>
         const STORAGE_KEY = 'startpage-settings-v1';
         const defaultSettings = {
@@ -284,6 +305,78 @@
             'gacor', 'slot', 'bet', 'jackpot', 'casino', 'judi', 'togel', 'rtp', 'judi',
             'qq', 'judol', '88', '77', '99', '11', 'zeus', 'gates', 'hoki', 'win', 'toto'
         ];
+
+        // Suggestion history (local only)
+        const HISTORY_KEY = 'startpage-suggest-history-v1';
+        const HISTORY_LIMIT = 40;
+
+        function loadHistory() {
+            try {
+                if (supportsLocalStorage()) {
+                    const raw = localStorage.getItem(HISTORY_KEY);
+                    const parsed = raw ? JSON.parse(raw) : [];
+                    console.debug('[history] loadHistory ->', parsed && parsed.length ? parsed.slice(0, 10) : parsed);
+                    return parsed;
+                } else {
+                    const match = document.cookie.match(new RegExp('(^| )' + HISTORY_KEY + '=([^;]+)'));
+                    const parsed = match ? JSON.parse(decodeURIComponent(match[2])) : [];
+                    console.debug('[history] loadHistory (cookie) ->', parsed && parsed.length ? parsed.slice(0, 10) : parsed);
+                    return parsed;
+                }
+            } catch (e) {
+                console.warn('[history] loadHistory failed', e);
+                return [];
+            }
+        }
+
+        function saveHistory(arr) {
+            try {
+                const dump = JSON.stringify(arr);
+                if (supportsLocalStorage()) localStorage.setItem(HISTORY_KEY, dump);
+                else document.cookie = HISTORY_KEY + '=' + encodeURIComponent(dump) + ';path=/;max-age=' + (60 * 60 * 24 * 365);
+                console.debug('[history] saveHistory -> length:', (arr || []).length, 'preview:', (arr || []).slice(0, 8));
+            } catch (e) {}
+        }
+
+        let suggestHistory = loadHistory();
+
+        function addToHistory(q) {
+            try {
+                q = (q || '').trim();
+                if (!q) return;
+                // remove duplicates (case-insensitive)
+                const lower = q.toLowerCase();
+                suggestHistory = suggestHistory.filter(item => item.toLowerCase() !== lower);
+                suggestHistory.unshift(q);
+                if (suggestHistory.length > HISTORY_LIMIT) suggestHistory.length = HISTORY_LIMIT;
+                saveHistory(suggestHistory);
+                console.debug('[history] addToHistory ->', q);
+            } catch (e) {}
+        }
+
+        function removeHistoryItem(idx) {
+            try {
+                if (typeof idx === 'number') {
+                    console.debug('[history] removeHistoryItem by index ->', idx, suggestHistory[idx]);
+                    suggestHistory.splice(idx, 1);
+                } else {
+                    const val = (idx || '').toString().trim();
+                    console.debug('[history] removeHistoryItem by value ->', val);
+                    // remove case-insensitive and trimmed
+                    suggestHistory = suggestHistory.filter(item => item.toString().trim().toLowerCase() !== val.toLowerCase());
+                }
+                saveHistory(suggestHistory);
+            } catch (e) {
+                console.warn('[history] removeHistoryItem failed', e);
+            }
+        }
+
+        function clearHistory() {
+            suggestHistory = [];
+            saveHistory(suggestHistory);
+            console.debug('[history] clearHistory -> cleared');
+            hideSuggestions();
+        }
 
         function applyTheme(theme) {
             body.setAttribute('data-theme', theme);
@@ -489,13 +582,10 @@
         });
 
         // Save button removed: settings are saved automatically when changed
+        // Use submitSearch so queries are saved to history first
         searchForm.addEventListener('submit', e => {
             e.preventDefault();
-            const q = queryInput.value.trim();
-            if (!q) return;
-            // The search engine URL is now stored in settings.engine
-            const url = settings.engine + encodeURIComponent(q);
-            window.location.href = url
+            submitSearch();
         });
 
         // clear button behaviour
@@ -522,7 +612,14 @@
 
         function scheduleSuggest(q) {
             if (suggestTimer) clearTimeout(suggestTimer);
+            console.debug('[suggest] scheduleSuggest ->', q);
             if (!q) {
+                // if empty, show local history (if any) instead of hiding
+                if (suggestHistory && suggestHistory.length) {
+                    // render history-only suggestions
+                    suggestTimer = setTimeout(() => renderSuggestions([]), 80);
+                    return;
+                }
                 hideSuggestions();
                 return;
             }
@@ -538,8 +635,10 @@
                 currentScript = null;
             }
             const cbName = 'gSuggestCB_' + Date.now();
+            console.debug('[suggest] fetchSuggest ->', q, 'callback:', cbName);
             window[cbName] = function(data) {
                 try {
+                    console.debug('[suggest] JSONP cb', cbName, 'raw:', data && data[1] ? data[1].slice(0, 8) : data);
                     renderSuggestions(data && data[1] ? data[1] : []);
                 } finally {
                     delete window[cbName];
@@ -561,33 +660,104 @@
         }
 
         function renderSuggestions(list) {
+            console.debug('[suggest] renderSuggestions remoteCount=', Array.isArray(list) ? list.length : 0, 'historyCount=', suggestHistory.length);
             suggestionsEl.innerHTML = '';
             activeIndex = -1;
-            if (!list || !list.length) {
-                hideSuggestions();
-                return;
+
+
+            // Build a unified list: local history first (if any), then remote suggestions
+            const items = [];
+            const q = (queryInput && queryInput.value) ? queryInput.value.trim().toLowerCase() : '';
+            if (suggestHistory && suggestHistory.length) {
+                suggestHistory.forEach(h => {
+                    // only include history items that match the current query (substring),
+                    // unless the query is empty (show all history)
+                    if (!q || h.toLowerCase().includes(q)) items.push({ type: 'history', text: h });
+                });
             }
-            // filter out banned terms (case-insensitive substring match)
-            const filtered = list.filter(s => {
-                if (!s) return false;
+
+            if (Array.isArray(list) && list.length) {
+                list.forEach(s => {
+                    // remote suggestions are generally already relevant; optionally filter by q too
+                    if (!q || s.toLowerCase().includes(q)) items.push({ type: 'remote', text: s });
+                });
+            }
+
+            // filter and dedupe while preserving order; also skip banned terms
+            const seen = new Set();
+            const final = [];
+            items.forEach(it => {
+                const s = (it.text || '').trim();
+                if (!s) return;
                 const lower = s.toLowerCase();
-                return !SUGGEST_BANNED.some(term => lower.includes(term));
+                if (SUGGEST_BANNED.some(term => lower.includes(term))) return;
+                if (seen.has(lower)) return;
+                seen.add(lower);
+                final.push(it);
             });
-            if (!filtered.length) {
+
+            if (!final.length) {
                 hideSuggestions();
                 return;
             }
-            filtered.forEach((s, i) => {
-                const it = document.createElement('div');
-                it.className = 'suggestion-item p-2 px-3 cursor-pointer text-white text-left hover:bg-white/10';
-                it.textContent = s;
-                it.addEventListener('mousedown', (e) => { // use mousedown to avoid blur before click
+
+            final.forEach((entry, i) => {
+                const row = document.createElement('div');
+                row.className = 'suggestion-item flex items-center justify-between p-2 px-3 cursor-pointer text-white text-left hover:bg-white/10';
+
+                const left = document.createElement('div');
+                left.className = 'flex-1 text-left';
+                left.textContent = entry.text;
+                left.addEventListener('mousedown', (e) => {
                     e.preventDefault();
                     selectSuggestion(i);
+                    // add to history before navigating
+                    addToHistory(entry.text);
                     submitSearch();
                 });
-                suggestionsEl.appendChild(it);
+
+                const right = document.createElement('div');
+                right.className = 'flex items-center gap-2';
+
+                if (entry.type === 'history') {
+                    // delete button for history item
+                    const del = document.createElement('button');
+                    del.type = 'button';
+                    del.className = 'text-xs text-red-300 px-2 py-1 rounded hover:bg-white/5';
+                    del.textContent = 'hapus';
+                        del.addEventListener('mousedown', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.debug('[ui] delete history mousedown ->', entry.text);
+                            // remove by value
+                            removeHistoryItem(entry.text);
+                            // re-render using same remote list
+                            renderSuggestions(list);
+                        });
+                    right.appendChild(del);
+                }
+
+                row.appendChild(left);
+                row.appendChild(right);
+                suggestionsEl.appendChild(row);
             });
+
+            // add clear history control if we have history
+            if (suggestHistory && suggestHistory.length) {
+                const clearRow = document.createElement('div');
+                clearRow.className = 'p-2 px-3 text-xs text-center text-white/70 hover:bg-white/5 cursor-pointer';
+                clearRow.textContent = 'Clear suggestion history';
+                clearRow.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    console.debug('[ui] clear history mousedown');
+                    if (confirm('Clear all suggestion history?')) {
+                        clearHistory();
+                        renderSuggestions(list);
+                    }
+                });
+                suggestionsEl.appendChild(clearRow);
+            }
+
             suggestionsEl.classList.remove('hidden');
         }
 
@@ -605,12 +775,17 @@
             if (!chosen) return;
             chosen.classList.add('active');
             activeIndex = i;
-            queryInput.value = chosen.textContent;
+            // chosen may contain child nodes (delete button). Use left text node
+            const left = chosen.querySelector('div') || chosen;
+            queryInput.value = left.textContent.trim();
         }
 
         function submitSearch() {
             const q = queryInput.value.trim();
             if (!q) return;
+            // save to local suggest history first
+            addToHistory(q);
+            console.debug('[search] submitSearch ->', q);
             const url = settings.engine + encodeURIComponent(q);
             window.location.href = url;
         }
@@ -639,6 +814,13 @@
         // hide suggestions on blur
         queryInput.addEventListener('blur', () => {
             setTimeout(hideSuggestions, 150);
+        });
+        // Show history on focus when input is empty
+        queryInput.addEventListener('focus', () => {
+            console.debug('[input] focus, value=', queryInput.value);
+            if (!queryInput.value.trim() && suggestHistory && suggestHistory.length) {
+                renderSuggestions([]);
+            }
         });
         window.addEventListener('load', () => {
             queryInput.focus()
@@ -684,6 +866,53 @@
 
         // populate dynamic year in footer
         document.getElementById('year').textContent = new Date().getFullYear();
+        // --- debug panel wiring ---
+        const dbgBtn = document.getElementById('dbgBtn');
+        const debugPanel = document.getElementById('debugPanel');
+        const dbgClose = document.getElementById('dbgClose');
+        const dbgInfo = document.getElementById('dbgInfo');
+        const dbgDump = document.getElementById('dbgDump');
+        const dbgReload = document.getElementById('dbgReload');
+        const dbgClear = document.getElementById('dbgClear');
+        const dbgRemove = document.getElementById('dbgRemove');
+        const dbgRemoveInput = document.getElementById('dbgRemoveInput');
+
+        function refreshDebugPanel() {
+            const h = loadHistory();
+            dbgInfo.textContent = h.length ? h.map((v, i) => `${i}: ${v}`).join('\n') : '(empty)';
+        }
+
+        dbgBtn.addEventListener('click', () => {
+            debugPanel.style.display = 'block';
+            refreshDebugPanel();
+        });
+        dbgClose.addEventListener('click', () => {
+            debugPanel.style.display = 'none';
+        });
+        dbgDump.addEventListener('click', () => {
+            console.debug('[dbg] dump history ->', loadHistory());
+            refreshDebugPanel();
+        });
+        dbgReload.addEventListener('click', () => {
+            suggestHistory = loadHistory();
+            refreshDebugPanel();
+            console.debug('[dbg] reloaded suggestHistory ->', suggestHistory);
+        });
+        dbgClear.addEventListener('click', () => {
+            if (!confirm('Force clear all history?')) return;
+            suggestHistory = [];
+            saveHistory(suggestHistory);
+            refreshDebugPanel();
+            hideSuggestions();
+            console.debug('[dbg] force cleared history');
+        });
+        dbgRemove.addEventListener('click', () => {
+            const v = dbgRemoveInput.value && dbgRemoveInput.value.trim();
+            if (!v) return alert('Masukkan value untuk dihapus');
+            removeHistoryItem(v);
+            refreshDebugPanel();
+            console.debug('[dbg] removed ->', v);
+        });
     </script>
 </body>
 
