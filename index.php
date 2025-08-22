@@ -204,33 +204,14 @@
 
     <!-- Floating settings button -->
     <button id="settingsBtn"
-        class="fixed bottom-4 right-4 p-3 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
+        class="fixed bottom-4 right-4 items-center flex justify-center p-3 size-10 rounded-full bg-[rgba(255,255,255,0.06)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)]
            shadow-lg">⚙️</button>
 
     <footer class="mt-8 text-xs opacity-70 text-center w-full pb-4">
         © <a href="http://jkp.my.id" target="_blank" rel="noopener noreferrer">JKP</a> • <span id="year"></span> • local settings
     </footer>
 
-    <!-- Debug overlay for suggestion history inspection -->
-    <div id="debugToggle" title="Toggle debug" style="position:fixed;left:8px;bottom:8px;z-index:60;">
-        <button id="dbgBtn" class="p-2 rounded-full bg-[rgba(255,255,255,0.06)]">🐞</button>
-    </div>
-    <div id="debugPanel" style="position:fixed;left:12px;bottom:56px;z-index:60;min-width:280px;max-width:420px;display:none;padding:10px;border-radius:8px;background:rgba(0,0,0,0.7);color:#fff;font-size:13px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-            <strong>Suggest History Debug</strong>
-            <button id="dbgClose" style="background:transparent;border:0;color:#fff;cursor:pointer">✕</button>
-        </div>
-        <div id="dbgInfo" style="max-height:220px;overflow:auto;background:rgba(255,255,255,0.02);padding:8px;border-radius:6px;margin-bottom:6px;font-family:monospace;white-space:pre-wrap;"></div>
-        <div style="display:flex;gap:6px;margin-bottom:6px;">
-            <button id="dbgDump" class="px-2 py-1 rounded bg-white/5">Dump console</button>
-            <button id="dbgReload" class="px-2 py-1 rounded bg-white/5">Reload</button>
-            <button id="dbgClear" class="px-2 py-1 rounded bg-red-600/60">Force Clear</button>
-        </div>
-        <div style="display:flex;gap:6px;align-items:center;">
-            <input id="dbgRemoveInput" placeholder="value to remove" style="flex:1;padding:6px;border-radius:6px;border:0;background:rgba(255,255,255,0.03);color:#fff;font-size:13px;" />
-            <button id="dbgRemove" class="px-2 py-1 rounded bg-white/5">Remove</button>
-        </div>
-    </div>
+    <!-- debug overlay removed -->
 
     <script>
         const STORAGE_KEY = 'startpage-settings-v1';
@@ -609,6 +590,45 @@
         let suggestTimer = null;
         let currentScript = null;
         let activeIndex = -1;
+        // when true, mouse hover handlers should ignore visual hover so keyboard nav wins
+        let suppressMouseHover = false;
+        let suppressMouseHoverTimer = null;
+
+        function removeAllHighlights() {
+            const items = suggestionsEl.querySelectorAll('.suggestion-item');
+            items.forEach(it => {
+                // remove visual highlighting (clear inline styles and classes)
+                it.style.background = '';
+                it.style.boxShadow = '';
+                it.style.transform = '';
+                it.style.color = '';
+                it.style.transition = '';
+                it.removeAttribute('aria-selected');
+            });
+        }
+
+        function highlightOnly(i, opts) {
+            opts = opts || {};
+            const items = suggestionsEl.querySelectorAll('.suggestion-item');
+            if (!items || !items.length) return;
+            removeAllHighlights();
+            const chosen = items[i];
+            if (!chosen) return;
+            // apply a non-shifting left accent and subtle background using inline styles
+            chosen.style.transition = 'background 160ms ease, box-shadow 160ms ease, color 160ms ease';
+            chosen.style.background = 'linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))';
+            chosen.style.boxShadow = 'inset 4px 0 0 0 rgba(34,211,238,0.14)';
+            chosen.style.color = '#9ef0ff';
+            chosen.setAttribute('aria-selected', 'true');
+            activeIndex = i;
+            if (opts.focus) {
+                try {
+                    queryInput.focus();
+                    const len = queryInput.value.length;
+                    queryInput.setSelectionRange(len, len);
+                } catch (e) {}
+            }
+        }
 
         function scheduleSuggest(q) {
             if (suggestTimer) clearTimeout(suggestTimer);
@@ -672,14 +692,20 @@
                 suggestHistory.forEach(h => {
                     // only include history items that match the current query (substring),
                     // unless the query is empty (show all history)
-                    if (!q || h.toLowerCase().includes(q)) items.push({ type: 'history', text: h });
+                    if (!q || h.toLowerCase().includes(q)) items.push({
+                        type: 'history',
+                        text: h
+                    });
                 });
             }
 
             if (Array.isArray(list) && list.length) {
                 list.forEach(s => {
                     // remote suggestions are generally already relevant; optionally filter by q too
-                    if (!q || s.toLowerCase().includes(q)) items.push({ type: 'remote', text: s });
+                    if (!q || s.toLowerCase().includes(q)) items.push({
+                        type: 'remote',
+                        text: s
+                    });
                 });
             }
 
@@ -703,7 +729,10 @@
 
             final.forEach((entry, i) => {
                 const row = document.createElement('div');
-                row.className = 'suggestion-item flex items-center justify-between p-2 px-3 cursor-pointer text-white text-left hover:bg-white/10';
+                row.setAttribute('role', 'option');
+                row.dataset.index = i;
+                // remove CSS :hover reliance and manage highlight exclusively via JS
+                row.className = 'suggestion-item flex items-center justify-between p-2 px-3 cursor-pointer text-white text-left';
 
                 const left = document.createElement('div');
                 left.className = 'flex-1 text-left';
@@ -716,6 +745,25 @@
                     submitSearch();
                 });
 
+                // keep hover/active visual exclusive: when mouse moves over an item set highlight
+                row.addEventListener('mouseenter', (ev) => {
+                    // if keyboard nav recently used, ignore mouse hover so keyboard selection stays visible
+                    if (suppressMouseHover) return;
+                    highlightOnly(i, {
+                        focus: false
+                    });
+                });
+                row.addEventListener('mouseleave', (ev) => {
+                    // only clear if this row is not the active keyboard-selected one
+                    if (activeIndex === i) return;
+                    // clear inline styles used by highlightOnly
+                    row.style.background = '';
+                    row.style.boxShadow = '';
+                    row.style.color = '';
+                    row.style.transition = '';
+                    row.removeAttribute('aria-selected');
+                });
+
                 const right = document.createElement('div');
                 right.className = 'flex items-center gap-2';
 
@@ -725,15 +773,15 @@
                     del.type = 'button';
                     del.className = 'text-xs text-red-300 px-2 py-1 rounded hover:bg-white/5';
                     del.textContent = 'hapus';
-                        del.addEventListener('mousedown', (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            console.debug('[ui] delete history mousedown ->', entry.text);
-                            // remove by value
-                            removeHistoryItem(entry.text);
-                            // re-render using same remote list
-                            renderSuggestions(list);
-                        });
+                    del.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.debug('[ui] delete history mousedown ->', entry.text);
+                        // remove by value
+                        removeHistoryItem(entry.text);
+                        // re-render using same remote list
+                        renderSuggestions(list);
+                    });
                     right.appendChild(del);
                 }
 
@@ -770,14 +818,29 @@
         function selectSuggestion(i) {
             const items = suggestionsEl.querySelectorAll('.suggestion-item');
             if (!items.length) return;
-            items.forEach(it => it.classList.remove('active'));
+            // remove highlight from all
+            items.forEach(it => {
+                it.classList.remove('bg-white/10', 'text-cyan-200', 'scale-105');
+                it.removeAttribute('aria-selected');
+            });
             const chosen = items[i];
             if (!chosen) return;
-            chosen.classList.add('active');
+            // add highlight classes (Tailwind utilities)
+            chosen.classList.add('bg-white/10', 'text-cyan-200', 'scale-105');
+            chosen.setAttribute('aria-selected', 'true');
             activeIndex = i;
             // chosen may contain child nodes (delete button). Use left text node
             const left = chosen.querySelector('div') || chosen;
             queryInput.value = left.textContent.trim();
+            // keep caret visible and focused in the input when navigating via keyboard
+            try {
+                queryInput.focus();
+                const len = queryInput.value.length;
+                // place caret at end
+                queryInput.setSelectionRange(len, len);
+            } catch (e) {
+                // ignore if not supported
+            }
         }
 
         function submitSearch() {
@@ -793,16 +856,33 @@
         // keyboard navigation
         queryInput.addEventListener('keydown', (e) => {
             const items = suggestionsEl.querySelectorAll('.suggestion-item');
+            // Ensure the input keeps focus while using keyboard arrows even if the mouse is over
+            // the suggestion panel (prevents the caret from disappearing)
+            try {
+                queryInput.focus();
+            } catch (e) {}
+
             if (!suggestionsEl.classList.contains('hidden') && items.length) {
                 if (e.key === 'ArrowDown') {
                     e.preventDefault();
-                    selectSuggestion((activeIndex + 1) % items.length);
+                    // keyboard nav: highlight via JS and suppress mouse hover briefly
+                    const next = (activeIndex + 1) % items.length;
+                    highlightOnly(next, { focus: true });
+                    suppressMouseHover = true;
+                    if (suppressMouseHoverTimer) clearTimeout(suppressMouseHoverTimer);
+                    suppressMouseHoverTimer = setTimeout(() => { suppressMouseHover = false; }, 300);
                 } else if (e.key === 'ArrowUp') {
                     e.preventDefault();
-                    selectSuggestion((activeIndex - 1 + items.length) % items.length);
+                    const prev = (activeIndex - 1 + items.length) % items.length;
+                    highlightOnly(prev, { focus: true });
+                    suppressMouseHover = true;
+                    if (suppressMouseHoverTimer) clearTimeout(suppressMouseHoverTimer);
+                    suppressMouseHoverTimer = setTimeout(() => { suppressMouseHover = false; }, 300);
                 } else if (e.key === 'Enter') {
                     if (activeIndex >= 0) {
                         e.preventDefault();
+                        // if enter pressed after keyboard nav, ensure the selected item is used
+                        // update queryInput from active item (already done by highlightOnly via focus)
                         submitSearch();
                     }
                 } else if (e.key === 'Escape') {
@@ -866,53 +946,7 @@
 
         // populate dynamic year in footer
         document.getElementById('year').textContent = new Date().getFullYear();
-        // --- debug panel wiring ---
-        const dbgBtn = document.getElementById('dbgBtn');
-        const debugPanel = document.getElementById('debugPanel');
-        const dbgClose = document.getElementById('dbgClose');
-        const dbgInfo = document.getElementById('dbgInfo');
-        const dbgDump = document.getElementById('dbgDump');
-        const dbgReload = document.getElementById('dbgReload');
-        const dbgClear = document.getElementById('dbgClear');
-        const dbgRemove = document.getElementById('dbgRemove');
-        const dbgRemoveInput = document.getElementById('dbgRemoveInput');
-
-        function refreshDebugPanel() {
-            const h = loadHistory();
-            dbgInfo.textContent = h.length ? h.map((v, i) => `${i}: ${v}`).join('\n') : '(empty)';
-        }
-
-        dbgBtn.addEventListener('click', () => {
-            debugPanel.style.display = 'block';
-            refreshDebugPanel();
-        });
-        dbgClose.addEventListener('click', () => {
-            debugPanel.style.display = 'none';
-        });
-        dbgDump.addEventListener('click', () => {
-            console.debug('[dbg] dump history ->', loadHistory());
-            refreshDebugPanel();
-        });
-        dbgReload.addEventListener('click', () => {
-            suggestHistory = loadHistory();
-            refreshDebugPanel();
-            console.debug('[dbg] reloaded suggestHistory ->', suggestHistory);
-        });
-        dbgClear.addEventListener('click', () => {
-            if (!confirm('Force clear all history?')) return;
-            suggestHistory = [];
-            saveHistory(suggestHistory);
-            refreshDebugPanel();
-            hideSuggestions();
-            console.debug('[dbg] force cleared history');
-        });
-        dbgRemove.addEventListener('click', () => {
-            const v = dbgRemoveInput.value && dbgRemoveInput.value.trim();
-            if (!v) return alert('Masukkan value untuk dihapus');
-            removeHistoryItem(v);
-            refreshDebugPanel();
-            console.debug('[dbg] removed ->', v);
-        });
+    // debug panel removed
     </script>
 </body>
 
